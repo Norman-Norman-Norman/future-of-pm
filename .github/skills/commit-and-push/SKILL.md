@@ -55,12 +55,26 @@ run_in_terminal with:
   timeout: 120000
 ```
 
-**Decision logic:**
-- If all tests pass (exit code 0), proceed to Step 3.
-- If any tests fail, **stop immediately**. Report the failing tests to the user with the exact error output. Do NOT commit. Say: "Tests failed. Please fix the failing tests before committing. Here are the failures: <test output>"
-- If the test command itself fails (e.g., missing dependencies), report the error and suggest running `npm install` first.
+**⛔ HARD STOP GATE — This step is a blocking gate. The entire procedure MUST abort if tests fail. Do NOT proceed to any subsequent step.**
 
-**Important:** Never skip this step. Never commit with failing tests. Never use `--no-verify` or equivalent flags.
+**Decision logic:**
+- If all tests pass (exit code 0), record `TESTS_PASSED = true` and proceed to Step 3.
+- If ANY test fails (exit code ≠ 0), you MUST:
+  1. Record `TESTS_PASSED = false`.
+  2. Report the exact failing test names and error output to the user.
+  3. Say: "❌ Tests failed. Commit and push aborted. Fix the failing tests and try again."
+  4. **STOP. Do NOT execute Steps 3–9. Do NOT stage, commit, or push. End your turn immediately.**
+- If the test command itself errors (e.g., missing dependencies, command not found), you MUST:
+  1. Report the error to the user.
+  2. Suggest running `npm install` first.
+  3. **STOP. Do NOT proceed. End your turn immediately.**
+
+**Critical rules for this step:**
+- Never skip this step under any circumstances.
+- Never commit with failing tests.
+- Never use `--no-verify`, `--force`, or any flag that bypasses test validation.
+- Never proceed to Step 3 or beyond unless exit code is exactly 0.
+- If the user asks you to skip tests, refuse and explain that the commit-and-push skill requires all tests to pass.
 
 ---
 
@@ -277,6 +291,8 @@ Refs #98
 
 Commit the staged changes with the composed message.
 
+**⛔ PRE-COMMIT GUARD: Before executing the commit, verify that `TESTS_PASSED = true` from Step 2. If tests did not pass, or if Step 2 was skipped for any reason, STOP immediately and do NOT commit. Report: "❌ Cannot commit — tests have not passed. Run tests first."**
+
 **Action:**
 ```
 run_in_terminal with:
@@ -358,7 +374,8 @@ Committed and pushed successfully.
 
 ## Rules and Constraints
 
-- **Never commit with failing tests.** Step 2 is mandatory and non-negotiable.
+- **Never commit with failing tests.** Step 2 is a HARD STOP gate — if tests fail, the entire procedure aborts. No staging, no committing, no pushing. This is mandatory and non-negotiable.
+- **Never bypass the test gate.** If the user asks to skip tests, refuse. Explain that this skill requires all tests to pass before any commit.
 - **Never skip lint checks** if a lint script exists in the project.
 - **Never fabricate issue numbers.** Only reference issues confirmed to exist via branch names, code comments, or user input.
 - **Never force push** (`git push --force`) unless the user explicitly requests it.
