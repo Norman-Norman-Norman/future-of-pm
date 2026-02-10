@@ -1,7 +1,7 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: 'Demo: Improve API Test Coverage - Add Unit Tests for Missing Routes.'
-tools: ['changes', 'codebase', 'editFiles', 'fetch', 'findTestFiles', 'githubRepo', 'problems', 'runCommands', 'runTasks', 'search', 'terminalLastCommand', 'testFailure', 'usages', 'playwright', 'github', 'Azure MCP Server']
+tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'web/fetch', 'web/githubRepo', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/runTask', 'read/getTaskOutput', 'search', 'read/terminalLastCommand', 'execute/testFailure', 'search/usages', 'playwright/*', 'github/*', 'Azure MCP Server']
 ---
 # 🧪 Demo: Add Unit Tests for Product and Supplier Routes
 

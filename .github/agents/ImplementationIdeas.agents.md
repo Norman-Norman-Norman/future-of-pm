@@ -1,7 +1,7 @@
 ---
-tools: ['search', 'github/*', 'playwright/*', 'githubRepo', 'todos']
+tools: ['search', 'github/*', 'playwright/*', 'web/githubRepo', 'todo']
 description: Explore implementation ideas
-model: Claude Sonnet 4.5
+model: Claude Opus 4.6 (copilot)
 ---
 
 Your goal is to creatively explore an idea and implement potential solutions.
