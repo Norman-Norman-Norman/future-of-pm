@@ -175,79 +175,120 @@ This is the heart of the prettiest PR. Use the template below, filling in every 
 ```markdown
 ## 📋 Summary
 
-<2–4 sentences explaining what this PR does and why. Answer: What problem does it solve? What value does it deliver? Write for a reviewer who has no prior context.>
+> <2–4 sentences explaining what this PR does and why. Answer: What problem does it solve? What value does it deliver? Write for a reviewer who has no prior context. Use a blockquote to make the summary stand out visually.>
+
+---
 
 ## 🔗 Related Issues
 
-<List each related issue with its link and relationship:>
+<List each related issue with its link and relationship. Use task-list syntax so reviewers see the linkage at a glance:>
+
 - Closes #<number> — <one-line description of the issue>
 - Refs #<number> — <one-line description>
-<If no issues: "No related issues.">
 
-## 🔄 Changes
+<If no issues, use a GitHub alert:>
+
+> [!NOTE]
+> No related issues for this PR.
+
+---
+
+## 🔄 What Changed
 
 <Organized list of all changes, grouped by area. Use sub-headings for multi-area PRs.>
 
-### <Area 1> (e.g., API, Frontend, Infrastructure)
+### `<area-1>` — <Area Name> (e.g., API, Frontend, Infrastructure)
 - <Change description with specific file references>
 - <Another change>
 
-### <Area 2>
+### `<area-2>` — <Area Name>
 - <Change description>
+
+---
 
 ## 📁 Files Changed
 
-<Visual table of all files affected:>
+<details>
+<summary><strong>📂 <N> files changed</strong> — click to expand</summary>
+<br>
 
-| Status | File | Description |
-|--------|------|-------------|
-| ✅ Added | `path/to/new-file.ts` | <What this file does> |
-| ✏️ Modified | `path/to/changed-file.ts` | <What changed and why> |
-| 🗑️ Deleted | `path/to/removed-file.ts` | <Why it was removed> |
+| &nbsp; | File | What changed |
+|:------:|------|-------------|
+| 🆕 | `path/to/new-file.ts` | <What this file does> |
+| ✏️ | `path/to/changed-file.ts` | <What changed and why> |
+| 🗑️ | `path/to/removed-file.ts` | <Why it was removed> |
+| 🔀 | `old-name.ts` → `new-name.ts` | <Why it was renamed> |
+
+</details>
+
+---
 
 ## 🧪 Testing
 
-<Evidence that the changes work:>
-- [ ] All existing tests pass (<N> tests, <N> files)
-- [ ] New tests added (list them)
-- [ ] Manual testing performed (describe what was verified)
-- [ ] No test changes needed (explain why)
+| Check | Status |
+|-------|--------|
+| All existing tests pass | ✅ <N> tests, <N> files |
+| New tests added | ✅ / ➖ N/A |
+| Manual testing performed | ✅ <describe what was verified> |
 
-<Include test run output summary if available:>
+<details>
+<summary>📊 Test output</summary>
+
 ```
 Test Files  <N> passed (<N>)
      Tests  <N> passed (<N>)
 ```
 
-## 📸 Screenshots / Examples
+</details>
 
-<If the PR includes UI changes, include before/after screenshots.>
-<If the PR is API-only or config-only, write: "N/A — no visual changes.">
+---
+
+## 📸 Screenshots
+
+<If the PR includes UI changes, use a before/after table:>
+
+| Before | After |
+|--------|-------|
+| <screenshot> | <screenshot> |
+
+<If the PR is API-only or config-only:>
+
+> [!NOTE]
+> No visual changes — this PR is backend / config only.
+
+---
 
 ## 🔍 Review Notes
 
-<Guide the reviewer — what should they pay attention to?>
+> [!IMPORTANT]
+> <Highlight the most critical item for the reviewer — the single most important thing to look at.>
+
 - <Area or file that needs careful review and why>
 - <Any trade-offs or design decisions that were made>
 - <Known limitations or follow-up work needed>
+
+---
 
 ## ✅ Checklist
 
 - [ ] Code follows project conventions and patterns
 - [ ] All tests pass
-- [ ] No unnecessary files committed (node_modules, dist, etc.)
+- [ ] No unnecessary files committed (`node_modules`, `dist`, etc.)
 - [ ] Commit messages follow Conventional Commits format
 - [ ] Related issues are linked
 ```
 
 #### Filling Guidelines
 
-- **Summary:** Do NOT just repeat the title. Add context about the problem, motivation, and approach. 2–4 complete sentences minimum.
-- **Changes:** Group by area of the codebase. Reference specific files. Use action verbs: "Add", "Update", "Remove", "Refactor", "Fix".
-- **Files Changed table:** Include EVERY file from the diff stat (Step 2d/2e). Use status emojis: ✅ Added, ✏️ Modified, 🗑️ Deleted, 📝 Renamed.
-- **Testing:** Be specific about what was tested. Include the actual test output numbers from the test run.
-- **Review Notes:** Think about what a reviewer would need to know. Highlight non-obvious decisions, areas of risk, or things that look wrong but are intentional.
+- **Summary:** Do NOT just repeat the title. Write it as a blockquote (`> ...`) so it stands out visually. Add context about the problem, motivation, and approach. 2–4 complete sentences minimum.
+- **Section separators:** Place a `---` horizontal rule between every major section for clean visual breaks on GitHub.
+- **Changes:** Group by area of the codebase using inline code for area names (e.g., `### \`api\` — API`). Reference specific files. Use action verbs: "Add", "Update", "Remove", "Refactor", "Fix".
+- **Files Changed table:** Wrap the table in `<details><summary>` so it's collapsible. Include EVERY file from the diff stat (Step 2d/2e). Use centered status emojis: 🆕 Added, ✏️ Modified, 🗑️ Deleted, 🔀 Renamed. Add a `<br>` after the summary tag for spacing.
+- **Testing:** Use a summary table instead of checkboxes for a cleaner look. Put full test output inside a collapsible `<details>` block.
+- **Screenshots:** Use a Before/After table for UI changes. Use a `> [!NOTE]` GitHub alert for non-visual PRs.
+- **Review Notes:** Lead with a `> [!IMPORTANT]` GitHub alert for the single most critical review item, then bullet the rest.
 - **Checklist:** Check off items that are true. Leave unchecked items that don't apply, with a note explaining why.
+- **GitHub Alerts:** Use `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]` for callouts — these render as colored boxes on GitHub.com.
 
 ---
 
@@ -370,6 +411,10 @@ After successful creation, report back with a visually formatted summary:
 - **Never leave template placeholder text** in the PR body (e.g., `<description here>`). Every placeholder must be replaced with real content.
 - **Never commit the description with unchecked required items** in the checklist without an explanation.
 - **Always use emojis for section headers** (📋, 🔗, 🔄, 📁, 🧪, 📸, 🔍, ✅) to create visual hierarchy and make the PR scannable.
+- **Always use `---` horizontal rules** between major sections for clean visual separation on GitHub.com.
+- **Always wrap the Files Changed table** in a collapsible `<details><summary>` block so long file lists don't dominate the PR.
+- **Always use GitHub Alerts** (`> [!NOTE]`, `> [!IMPORTANT]`, `> [!WARNING]`) for callouts instead of plain text — they render as styled, colored boxes on github.com.
+- **Always put test output** inside a collapsible `<details>` block to keep the PR body scannable.
 
 ---
 
@@ -408,19 +453,24 @@ After successful creation, report back with a visually formatted summary:
 ```markdown
 ## 📋 Summary
 
-Add three new GitHub Copilot Agent Skills that teach Copilot how to
-create skills, file GitHub issues, and commit code safely. These skills
-provide deterministic, step-by-step procedures with explicit tool calls,
-decision logic, and error handling so Copilot can execute them
-autonomously without guessing.
+> Add three new GitHub Copilot Agent Skills that teach Copilot how to
+> create skills, file GitHub issues, and commit code safely. These skills
+> provide deterministic, step-by-step procedures with explicit tool calls,
+> decision logic, and error handling so Copilot can execute them
+> autonomously without guessing.
+
+---
 
 ## 🔗 Related Issues
 
-- No related issues.
+> [!NOTE]
+> No related issues for this PR.
 
-## 🔄 Changes
+---
 
-### Agent Skills
+## 🔄 What Changed
+
+### `skills` — Agent Skills
 - Add `create-agent-skills` — an 8-step meta-skill for authoring
   high-quality Agent Skills with quality checklist and examples
 - Add `create-github-issue` — a 6-step procedure for creating GitHub
@@ -428,42 +478,67 @@ autonomously without guessing.
 - Add `commit-and-push` — a 9-step procedure with HARD STOP test gate,
   Conventional Commit message composition, and auto issue linking
 
-### Supporting Files
+### `skills` — Supporting Files
 - Add `commit-template.txt` — structural template for commit messages
+
+---
 
 ## 📁 Files Changed
 
-| Status | File | Description |
-|--------|------|-------------|
-| ✅ Added | `.github/skills/create-agent-skills/SKILL.md` | Meta-skill for creating Agent Skills |
-| ✅ Added | `.github/skills/create-github-issue/SKILL.md` | GitHub issue creation procedure |
-| ✅ Added | `.github/skills/commit-and-push/SKILL.md` | Safe commit and push workflow |
-| ✅ Added | `.github/skills/commit-and-push/commit-template.txt` | Commit message structure template |
+<details>
+<summary><strong>📂 4 files changed</strong> — click to expand</summary>
+<br>
+
+| &nbsp; | File | What changed |
+|:------:|------|-------------|
+| 🆕 | `.github/skills/create-agent-skills/SKILL.md` | Meta-skill for creating Agent Skills |
+| 🆕 | `.github/skills/create-github-issue/SKILL.md` | GitHub issue creation procedure |
+| 🆕 | `.github/skills/commit-and-push/SKILL.md` | Safe commit and push workflow |
+| 🆕 | `.github/skills/commit-and-push/commit-template.txt` | Commit message structure template |
+
+</details>
+
+---
 
 ## 🧪 Testing
 
-- [x] All existing tests pass (6 tests, 1 file)
-- [ ] New tests added — N/A, skills are Markdown instruction files
-- [x] Manual testing — skills were used to create this PR
-- [x] No production code modified
+| Check | Status |
+|-------|--------|
+| All existing tests pass | ✅ 6 tests, 1 file |
+| New tests added | ➖ N/A — skills are Markdown instruction files |
+| Manual testing performed | ✅ Skills were used to create this PR |
+
+<details>
+<summary>📊 Test output</summary>
 
 ```
 Test Files  1 passed (1)
      Tests  6 passed (6)
 ```
 
-## 📸 Screenshots / Examples
+</details>
 
-N/A — no visual changes.
+---
+
+## 📸 Screenshots
+
+> [!NOTE]
+> No visual changes — this PR adds Markdown skill files only.
+
+---
 
 ## 🔍 Review Notes
 
+> [!IMPORTANT]
+> The commit-and-push skill has a HARD STOP gate — please verify the
+> language is strong enough to prevent agents from bypassing tests.
+
 - Each skill follows a consistent structure: frontmatter → context →
   prerequisites → numbered procedure → rules → examples
-- The commit-and-push skill has a HARD STOP gate — please verify the
-  language is strong enough to prevent agents from bypassing tests
 - The create-agent-skills skill includes a full production example
-  (api-route-creation) — check that it matches this project's patterns
+  (`api-route-creation`) — check that it matches this project's patterns
+
+---
 
 ## ✅ Checklist
 
