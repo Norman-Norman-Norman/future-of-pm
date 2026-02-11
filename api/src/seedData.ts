@@ -160,6 +160,16 @@ export const products: Product[] = [
         sku: "CAT-TRACKER-001",
         unit: "piece",
         imgName: "tracker-mat.png"
+    },
+    {
+        productId: 13,
+        supplierId: 1,
+        name: "GitHub Copilot Chef's Hat",
+        description: "The purrfect headwear for the coding chef in your life. This premium AI-powered chef's hat features the iconic GitHub Copilot logo embroidered in signature blue and is crafted from breathable, stain-resistant fabric designed to withstand both kitchen splatters and late-night coding sessions. Whether you're cooking up a gourmet meal or cooking up a deploy, this hat keeps you looking sharp. One size fits most humans (and ambitious cats).",
+        price: 72.99,
+        sku: "GHCP-HAT-001",
+        unit: "piece",
+        imgName: "GHCP_ChefsHat.png"
     }
 ];
 
