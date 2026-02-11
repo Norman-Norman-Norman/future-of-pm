@@ -26,6 +26,7 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showPromo, setShowPromo] = useState(true);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
 
@@ -220,6 +221,51 @@ export default function Products() {
             <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-lg transition-colors duration-300`}>
               {selectedProduct.description}
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Promo Popup - Chef's Hat Sale */}
+      {showPromo && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+          <div 
+            className={`${darkMode ? 'bg-gray-800 border-primary' : 'bg-white border-primary'} border-2 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center transition-colors duration-300`}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="mb-4">
+              <span className="text-5xl">🎉</span>
+            </div>
+            <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2`}>
+              EXCLUSIVE SALE!
+            </h2>
+            <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-xl p-4 mb-4`}>
+              <img 
+                src="/GHCP_ChefsHat.png" 
+                alt="GitHub Copilot Chef's Hat"
+                className="w-32 h-32 object-contain mx-auto mb-3"
+              />
+              <h3 className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'}`}>
+                GitHub Copilot Chef's Hat
+              </h3>
+            </div>
+            <div className="mb-4">
+              <span className="text-primary text-3xl font-extrabold">30% OFF</span>
+              <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-1 text-sm`}>
+                For Microsoft Tech Connect Attendees Only
+              </p>
+            </div>
+            <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-lg px-4 py-3 mb-6 inline-block`}>
+              <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-xs uppercase tracking-wider mb-1`}>Promo Code</p>
+              <span className={`text-primary text-2xl font-mono font-bold tracking-widest`}>TechConnect</span>
+            </div>
+            <div>
+              <button
+                onClick={() => setShowPromo(false)}
+                className="w-full bg-primary hover:bg-accent text-white font-semibold py-3 px-6 rounded-lg transition-colors text-lg"
+              >
+                OK
+              </button>
+            </div>
           </div>
         </div>
       )}
