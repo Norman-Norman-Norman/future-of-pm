@@ -1,5 +1,6 @@
 import { Supplier } from './models/supplier';
 import { Product } from './models/product';
+import { ProductReview } from './models/productReview';
 import { Headquarters } from './models/headquarters';
 import { Branch } from './models/branch';
 import { Order } from './models/order';
@@ -275,6 +276,70 @@ export const deliveries: Delivery[] = [
         name: "WhiskerWare Entertainment Package",
         description: "Entertainment and tracking systems for feline companions",
         status: "in-transit"
+    }
+];
+
+// Product Reviews
+export const productReviews: ProductReview[] = [
+    {
+        reviewId: 1,
+        productId: 1,
+        displayName: "Felix W.",
+        rating: 5,
+        title: "My cat is now a meal-prep influencer",
+        body: "The SmartFeeder One has completely transformed our household. It detects my cat's nap cycles with scary precision and now Mittens eats on a schedule that would make a nutritionist jealous. Highly recommend.",
+        createdAt: "2024-11-15T10:30:00.000Z",
+        helpful: 14
+    },
+    {
+        reviewId: 2,
+        productId: 1,
+        displayName: "Tabitha P.",
+        rating: 4,
+        title: "Great product, minor app glitches",
+        body: "Love the auto-scheduling and health repo integration. Had a few connectivity hiccups with the app on iOS but support was responsive. Overall a solid buy for multi-cat households.",
+        createdAt: "2024-12-02T14:15:00.000Z",
+        helpful: 7
+    },
+    {
+        reviewId: 3,
+        productId: 2,
+        displayName: "Nina N.",
+        rating: 5,
+        title: "Worth every penny",
+        body: "The AutoClean Litter Dome changed my life. The Slack alert feature is genius — I got notified about an issue before I even noticed anything was wrong. Zero odor, zero effort. 10/10.",
+        createdAt: "2024-10-20T08:00:00.000Z",
+        helpful: 22
+    },
+    {
+        reviewId: 4,
+        productId: 2,
+        displayName: "Marcus R.",
+        rating: 3,
+        title: "Good but loud during cleaning cycle",
+        body: "The self-cleaning mechanism works well but the motor is surprisingly loud at night. My cat now avoids it after 10pm. The health reports are a nice touch though.",
+        createdAt: "2025-01-05T20:45:00.000Z",
+        helpful: 5
+    },
+    {
+        reviewId: 5,
+        productId: 4,
+        displayName: "Sarah K.",
+        rating: 5,
+        title: "GPS accuracy is phenomenal",
+        body: "PawTrack never misses a beat. The zoomie alerts crack me up every time and the mood detection is surprisingly accurate. Battery lasts 3 days on a charge.",
+        createdAt: "2024-09-18T16:20:00.000Z",
+        helpful: 31
+    },
+    {
+        reviewId: 6,
+        productId: 4,
+        displayName: "Derek T.",
+        rating: 4,
+        title: "Solid tracker, wish the collar was lighter",
+        body: "The tracking features are excellent and the AI mood detection adds a fun layer of insight. Collar weight is fine for larger cats but may be heavy for kittens under 3 months.",
+        createdAt: "2025-02-10T11:00:00.000Z",
+        helpful: 9
     }
 ];
 
