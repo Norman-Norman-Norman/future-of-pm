@@ -218,7 +218,14 @@ export const orders: Order[] = [
         orderDate: new Date().toISOString(),
         name: "Q2 Feline Tech Refresh",
         description: "Quarterly smart cat tech product refresh",
-        status: "pending"
+        status: "draft",
+        statusHistory: [
+            {
+                from: null,
+                to: "draft",
+                timestamp: new Date().toISOString()
+            }
+        ]
     },
     {
         orderId: 2,
@@ -226,7 +233,29 @@ export const orders: Order[] = [
         orderDate: new Date().toISOString(),
         name: "Cat Enrichment Bundle",
         description: "Monthly cat entertainment systems restock",
-        status: "processing"
+        status: "processing",
+        statusHistory: [
+            {
+                from: null,
+                to: "draft",
+                timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                from: "draft",
+                to: "submitted",
+                timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                from: "submitted",
+                to: "approved",
+                timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                from: "approved",
+                to: "processing",
+                timestamp: new Date().toISOString()
+            }
+        ]
     }
 ];
 
