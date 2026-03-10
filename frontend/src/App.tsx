@@ -10,6 +10,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
 import AdminProducts from './components/admin/AdminProducts';
+import Inventory from './components/admin/Inventory';
 import Cart from './components/entity/cart/Cart';
 import Checkout from './components/entity/cart/Checkout';
 import { useTheme } from './context/ThemeContext';
@@ -31,6 +32,7 @@ function ThemedApp() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/inventory" element={<Inventory />} />
             <Route path="/launch" element={<LandingPage />} />
           </Routes>
         </main>

@@ -14,6 +14,9 @@ interface Product {
   sku: string;
   unit: string;
   supplierId: number;
+  stockLevel: number;
+  reorderPoint: number;
+  reorderQuantity: number;
   discount?: number;
 }
 
@@ -21,6 +24,28 @@ const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get(`${api.baseURL}${api.endpoints.products}`);
   return data;
 };
+
+function StockBadge({ product }: { product: Product }) {
+  if (product.stockLevel === 0) {
+    return (
+      <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">
+        Out of Stock
+      </span>
+    );
+  }
+  if (product.stockLevel <= product.reorderPoint) {
+    return (
+      <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-700">
+        Low Stock ({product.stockLevel})
+      </span>
+    );
+  }
+  return (
+    <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
+      In Stock ({product.stockLevel})
+    </span>
+  );
+}
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
@@ -46,7 +71,7 @@ export default function Products() {
 
   const handleAddToCart = (product: Product) => {
     const quantity = quantities[product.productId] || 0;
-    if (quantity > 0) {
+    if (quantity > 0 && product.stockLevel > 0) {
       const effectivePrice = product.discount
         ? product.price * (1 - product.discount)
         : product.price;
@@ -137,7 +162,10 @@ export default function Products() {
                 
                 <div className="p-4 flex flex-col flex-grow">
                   <h3 className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}>{product.name}</h3>
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 flex-grow transition-colors duration-300`}>{product.description}</p>
+                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-2 flex-grow transition-colors duration-300`}>{product.description}</p>
+                  <div className="mb-3">
+                    <StockBadge product={product} />
+                  </div>
                   <div className="space-y-4 mt-auto">
                     <div className="flex justify-between items-center">
                       {product.discount ? (
@@ -154,9 +182,10 @@ export default function Products() {
                       <div className={`flex items-center space-x-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-lg p-1 transition-colors duration-300`}>
                         <button 
                           onClick={() => handleQuantityChange(product.productId, -1)}
-                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
+                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300 ${product.stockLevel === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                           aria-label={`Decrease quantity of ${product.name}`}
                           id={`decrease-qty-${product.productId}`}
+                          disabled={product.stockLevel === 0}
                         >
                           <span aria-hidden="true">-</span>
                         </button>
@@ -169,9 +198,10 @@ export default function Products() {
                         </span>
                         <button 
                           onClick={() => handleQuantityChange(product.productId, 1)}
-                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
+                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300 ${product.stockLevel === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                           aria-label={`Increase quantity of ${product.name}`}
                           id={`increase-qty-${product.productId}`}
+                          disabled={product.stockLevel === 0}
                         >
                           <span aria-hidden="true">+</span>
                         </button>
@@ -179,11 +209,11 @@ export default function Products() {
                       <button 
                         onClick={() => handleAddToCart(product)}
                         className={`px-4 py-2 rounded-lg transition-colors ${
-                          quantities[product.productId] 
+                          quantities[product.productId] && product.stockLevel > 0
                             ? 'bg-primary hover:bg-accent text-white' 
                             : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
                         }`}
-                        disabled={!quantities[product.productId]}
+                        disabled={!quantities[product.productId] || product.stockLevel === 0}
                         aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
                         id={`add-to-cart-${product.productId}`}
                       >

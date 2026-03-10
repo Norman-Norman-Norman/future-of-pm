@@ -1,12 +1,36 @@
 import Slider from 'react-slick';
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+import { api } from '../api/config';
+
+interface Product {
+  productId: number;
+  name: string;
+  stockLevel: number;
+  reorderPoint: number;
+}
+
+const fetchLowStock = async (): Promise<Product[]> => {
+  const { data } = await axios.get(`${api.baseURL}${api.endpoints.productLowStock}`);
+  return data;
+};
+
+function formatLowStockMessage(products: Product[]): string {
+  return products.map(p =>
+    p.stockLevel === 0 ? `${p.name} (Out of Stock)` : `${p.name} (${p.stockLevel} left)`
+  ).join(', ');
+}
 
 export default function Welcome() {
   const sliderRef = useRef<Slider | null>(null);
   const { darkMode } = useTheme();
+  const { isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { data: lowStockProducts } = useQuery('lowStock', fetchLowStock, { enabled: isAdmin });
 
   const sliderSettings = {
     dots: true,
@@ -40,6 +64,27 @@ export default function Welcome() {
 
   return (
     <div className={`relative ${darkMode ? 'bg-dark text-light' : 'bg-white text-gray-800'} transition-colors duration-300`}>
+      {/* Low-stock alert banner for admins */}
+      {isAdmin && lowStockProducts && lowStockProducts.length > 0 && (
+        <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="text-yellow-600 font-semibold text-sm">
+                ⚠️ {lowStockProducts.length} product{lowStockProducts.length !== 1 ? 's' : ''} below reorder point:
+              </span>
+              <span className="text-yellow-700 text-sm">
+                {formatLowStockMessage(lowStockProducts)}
+              </span>
+            </div>
+            <Link
+              to="/admin/inventory"
+              className="ml-4 text-sm font-medium text-yellow-800 underline hover:text-yellow-900 whitespace-nowrap"
+            >
+              View Inventory →
+            </Link>
+          </div>
+        </div>
+      )}
       {/* Content */}
       <div className="relative px-4 sm:px-6 lg:px-8 pt-8">
         <div className="relative py-4">
