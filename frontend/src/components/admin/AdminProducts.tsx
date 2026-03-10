@@ -124,48 +124,59 @@ export default function AdminProducts() {
       </div>
 
       <div className="overflow-x-auto rounded-lg shadow-lg">
-        <table className={`min-w-full ${darkMode ? 'bg-dark' : 'bg-white'} rounded-lg overflow-hidden transition-colors duration-300`}>
+        <table aria-label="Products" className={`min-w-full ${darkMode ? 'bg-dark' : 'bg-white'} rounded-lg overflow-hidden transition-colors duration-300`}>
           <thead className={`${darkMode ? 'bg-gray-800' : 'bg-gray-200'} transition-colors duration-300`}>
             <tr>
               <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider cursor-pointer hover:${darkMode ? 'bg-gray-700' : 'bg-gray-300'} transition-colors duration-300`}
                 onClick={() => handleSort('name')}
+                aria-sort={sortField === 'name' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+                scope="col"
               >
                 Name {renderSortIcon('name')}
               </th>
               <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider cursor-pointer hover:${darkMode ? 'bg-gray-700' : 'bg-gray-300'} transition-colors duration-300`}
                 onClick={() => handleSort('supplier')}
+                aria-sort={sortField === 'supplier' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+                scope="col"
               >
                 Supplier {renderSortIcon('supplier')}
               </th>
               <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider cursor-pointer hover:${darkMode ? 'bg-gray-700' : 'bg-gray-300'} transition-colors duration-300`}
                 onClick={() => handleSort('price')}
+                aria-sort={sortField === 'price' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+                scope="col"
               >
                 Price {renderSortIcon('price')}
               </th>
               <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider cursor-pointer hover:${darkMode ? 'bg-gray-700' : 'bg-gray-300'} transition-colors duration-300`}
                 onClick={() => handleSort('sku')}
+                aria-sort={sortField === 'sku' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+                scope="col"
               >
                 SKU {renderSortIcon('sku')}
               </th>
               <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider cursor-pointer hover:${darkMode ? 'bg-gray-700' : 'bg-gray-300'} transition-colors duration-300`}
                 onClick={() => handleSort('unit')}
+                aria-sort={sortField === 'unit' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+                scope="col"
               >
                 Unit {renderSortIcon('unit')}
               </th>
               <th 
                 className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider transition-colors duration-300`}
+                scope="col"
               >
                 Discount
               </th>
-              <th className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider transition-colors duration-300`}>
+              <th className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider transition-colors duration-300`} scope="col">
                 Description
               </th>
-              <th className={`px-6 py-3 text-right text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider transition-colors duration-300`}>
+              <th className={`px-6 py-3 text-right text-xs font-medium ${darkMode ? 'text-light' : 'text-gray-700'} uppercase tracking-wider transition-colors duration-300`} scope="col">
                 Actions
               </th>
             </tr>
@@ -190,6 +201,7 @@ export default function AdminProducts() {
                       setEditingProduct(product);
                       setShowForm(true);
                     }}
+                    aria-label={`Edit product ${product.name}`}
                     className="inline-flex items-center px-3 py-1 bg-primary text-white rounded hover:bg-accent transition-colors duration-300"
                   >
                     Edit
@@ -205,6 +217,7 @@ export default function AdminProducts() {
                         }
                       }
                     }}
+                    aria-label={`Delete product ${product.name}`}
                     className="inline-flex items-center px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-300"
                   >
                     Delete
