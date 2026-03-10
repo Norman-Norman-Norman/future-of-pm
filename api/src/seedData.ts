@@ -6,6 +6,7 @@ import { Order } from './models/order';
 import { OrderDetail } from './models/orderDetail';
 import { Delivery } from './models/delivery';
 import { OrderDetailDelivery } from './models/orderDetailDelivery';
+import { Subscription } from './models/subscription';
 
 // Suppliers
 export const suppliers: Supplier[] = [
@@ -300,5 +301,34 @@ export const orderDetailDeliveries: OrderDetailDelivery[] = [
         deliveryId: 2,
         quantity: 20,
         notes: "Delivery"
+    }
+];
+
+// Subscriptions
+export const subscriptions: Subscription[] = [
+    {
+        subscriptionId: 1,
+        branchId: 1,
+        items: [
+            { productId: 1, quantity: 2 },
+            { productId: 7, quantity: 1 }
+        ],
+        frequency: 'monthly',
+        nextDeliveryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'active',
+        discountPercentage: 5,
+        createdAt: new Date().toISOString()
+    },
+    {
+        subscriptionId: 2,
+        branchId: 2,
+        items: [
+            { productId: 2, quantity: 1 }
+        ],
+        frequency: 'quarterly',
+        nextDeliveryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'active',
+        discountPercentage: 5,
+        createdAt: new Date().toISOString()
     }
 ];
