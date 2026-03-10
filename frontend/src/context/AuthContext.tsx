@@ -3,6 +3,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 interface AuthContextType {
   isLoggedIn: boolean;
   isAdmin: boolean;
+  username: string;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -12,6 +13,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState('');
 
   const login = async (email: string, password: string) => {
     // In a real app, you would validate credentials with an API
@@ -19,16 +21,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (email && password) {
       setIsLoggedIn(true);
       setIsAdmin(email.endsWith('@github.com'));
+      setUsername(email);
     }
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setIsAdmin(false);
+    setUsername('');
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, isAdmin, username, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
