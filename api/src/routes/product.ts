@@ -102,6 +102,7 @@
 import express from 'express';
 import { Product } from '../models/product';
 import { products as seedProducts } from '../seedData';
+import reviewRouter from './productReview';
 
 const router = express.Router();
 
@@ -150,5 +151,8 @@ router.delete('/:id', (req, res) => {
     res.status(404).send('Product not found');
   }
 });
+
+// Mount review sub-router
+router.use('/:productId/reviews', reviewRouter);
 
 export default router;
