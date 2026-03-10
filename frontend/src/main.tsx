@@ -4,7 +4,14 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import './index.css'
 import App from './App.tsx'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+  },
+})
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
