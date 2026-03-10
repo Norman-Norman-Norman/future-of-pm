@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import path from 'path';
 import { existsSync } from 'fs';
+import rateLimit from 'express-rate-limit';
 import deliveryRoutes from './routes/delivery';
 import orderDetailDeliveryRoutes from './routes/orderDetailDelivery';
 import productRoutes from './routes/product';
@@ -12,6 +13,7 @@ import orderRoutes from './routes/order';
 import branchRoutes from './routes/branch';
 import headquartersRoutes from './routes/headquarters';
 import supplierRoutes from './routes/supplier';
+import authRoutes from './routes/auth';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -68,6 +70,15 @@ app.get('/api-docs.json', (req, res) => {
 
 app.use(express.json());
 
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+app.use('/api/', apiLimiter);
+
 app.use('/api/deliveries', deliveryRoutes);
 app.use('/api/order-detail-deliveries', orderDetailDeliveryRoutes);
 app.use('/api/products', productRoutes);
@@ -76,6 +87,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/branches', branchRoutes);
 app.use('/api/headquarters', headquartersRoutes);
 app.use('/api/suppliers', supplierRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');

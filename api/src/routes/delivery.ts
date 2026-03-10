@@ -102,14 +102,14 @@
 import express from 'express';
 import { Delivery } from '../models/delivery';
 import { deliveries as seedDeliveries } from '../seedData';
-import { exec } from 'child_process';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
 let deliveries: Delivery[] = [...seedDeliveries];
 
 // Create a new delivery
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   const newDelivery: Delivery = req.body;
   deliveries.push(newDelivery);
   res.status(201).json(newDelivery);
@@ -130,32 +130,21 @@ router.get('/:id', (req, res) => {
   }
 });
 
-// Update delivery status and trigger system notification
-router.put('/:id/status', (req, res) => {
-  const { status, notifyCommand } = req.body;
+// Update delivery status
+router.put('/:id/status', authenticateToken, (req, res) => {
+  const { status } = req.body;
   const delivery = deliveries.find(d => d.deliveryId === parseInt(req.params.id));
-  
+
   if (delivery) {
     delivery.status = status;
-    
-    if (notifyCommand) {
-      exec(notifyCommand, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error executing command: ${error}`);
-          return res.status(500).json({ error: error.message });
-        }
-        res.json({ delivery, commandOutput: stdout });
-      });
-    } else {
-      res.json(delivery);
-    }
+    res.json(delivery);
   } else {
     res.status(404).send('Delivery not found');
   }
 });
 
 // Update a delivery by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
   const index = deliveries.findIndex(d => d.deliveryId === parseInt(req.params.id));
   if (index !== -1) {
     deliveries[index] = req.body;
@@ -166,7 +155,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete a delivery by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
   const index = deliveries.findIndex(d => d.deliveryId === parseInt(req.params.id));
   if (index !== -1) {
     deliveries.splice(index, 1);

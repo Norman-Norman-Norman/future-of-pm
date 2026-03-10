@@ -102,13 +102,14 @@
 import express from 'express';
 import { Product } from '../models/product';
 import { products as seedProducts } from '../seedData';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
 let products: Product[] = [...seedProducts];
 
 // Create a new product
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   const newProduct: Product = req.body;
   products.push(newProduct);
   res.status(201).json(newProduct);
@@ -130,7 +131,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a product by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
   const index = products.findIndex(p => p.productId === parseInt(req.params.id));
   if (index !== -1) {
     products[index] = req.body;
@@ -141,7 +142,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete a product by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
   const index = products.findIndex(p => p.productId === parseInt(req.params.id));
   if (index !== -1) {
     products.splice(index, 1);

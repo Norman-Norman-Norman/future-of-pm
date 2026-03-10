@@ -102,13 +102,14 @@
 import express from 'express';
 import { Headquarters } from '../models/headquarters';
 import { headquarters as seedHeadquarters } from '../seedData';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
 let headquartersList: Headquarters[] = [...seedHeadquarters];
 
 // Create a new headquarters
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   const newHeadquarters: Headquarters = req.body;
   headquartersList.push(newHeadquarters);
   res.status(201).json(newHeadquarters);
@@ -130,7 +131,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a headquarters by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
   const index = headquartersList.findIndex(h => h.headquartersId === parseInt(req.params.id));
   if (index !== -1) {
     headquartersList[index] = req.body;
@@ -141,7 +142,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete a headquarters by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
   const index = headquartersList.findIndex(h => h.headquartersId === parseInt(req.params.id));
   if (index !== -1) {
     headquartersList.splice(index, 1);

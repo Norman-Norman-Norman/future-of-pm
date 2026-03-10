@@ -102,13 +102,14 @@
 import express from 'express';
 import { OrderDetailDelivery } from '../models/orderDetailDelivery';
 import { orderDetailDeliveries as seedOrderDetailDeliveries } from '../seedData';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
 let orderDetailDeliveries: OrderDetailDelivery[] = [...seedOrderDetailDeliveries];
 
 // Create a new order detail delivery
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   const newOrderDetailDelivery: OrderDetailDelivery = req.body;
   orderDetailDeliveries.push(newOrderDetailDelivery);
   res.status(201).json(newOrderDetailDelivery);
@@ -130,7 +131,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update an order detail delivery by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
   const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(req.params.id));
   if (index !== -1) {
     orderDetailDeliveries[index] = req.body;
@@ -141,7 +142,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete an order detail delivery by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
   const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(req.params.id));
   if (index !== -1) {
     orderDetailDeliveries.splice(index, 1);

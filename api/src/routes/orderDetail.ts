@@ -102,13 +102,14 @@
 import express from 'express';
 import { OrderDetail } from '../models/orderDetail';
 import { orderDetails as seedOrderDetails } from '../seedData';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
 let orderDetails: OrderDetail[] = [...seedOrderDetails];
 
 // Create a new order detail
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   const newOrderDetail: OrderDetail = req.body;
   orderDetails.push(newOrderDetail);
   res.status(201).json(newOrderDetail);
@@ -130,7 +131,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update an order detail by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
   const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(req.params.id));
   if (index !== -1) {
     orderDetails[index] = req.body;
@@ -141,7 +142,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete an order detail by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
   const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(req.params.id));
   if (index !== -1) {
     orderDetails.splice(index, 1);

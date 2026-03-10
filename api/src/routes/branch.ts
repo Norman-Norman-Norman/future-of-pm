@@ -102,6 +102,7 @@
 import express from 'express';
 import { Branch } from '../models/branch';
 import { branches as seedBranches } from '../seedData';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -113,7 +114,7 @@ export const resetBranches = () => {
 };
 
 // Create a new branch
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   const newBranch: Branch = req.body;
   branches.push(newBranch);
   res.status(201).json(newBranch);
@@ -135,7 +136,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a branch by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
   const index = branches.findIndex(b => b.branchId === parseInt(req.params.id));
   if (index !== -1) {
     branches[index] = req.body;
@@ -146,7 +147,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete a branch by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
   const index = branches.findIndex(b => b.branchId === parseInt(req.params.id));
   if (index !== -1) {
     branches.splice(index, 1);
