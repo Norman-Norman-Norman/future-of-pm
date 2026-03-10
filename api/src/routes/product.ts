@@ -9,17 +9,42 @@
  * @swagger
  * /api/products:
  *   get:
- *     summary: Returns all products
+ *     summary: Returns a paginated list of products
  *     tags: [Products]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [name, price, sku]
+ *         description: Field to sort by
+ *       - $ref: '#/components/parameters/sortOrderParam'
+ *       - in: query
+ *         name: supplierId
+ *         schema:
+ *           type: integer
+ *         description: Filter by supplier ID
+ *       - in: query
+ *         name: hasDiscount
+ *         schema:
+ *           type: boolean
+ *         description: Filter by whether a discount exists
  *     responses:
  *       200:
- *         description: List of all products
+ *         description: Paginated list of products
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new product
  *     tags: [Products]
@@ -102,10 +127,16 @@
 import express from 'express';
 import { Product } from '../models/product';
 import { products as seedProducts } from '../seedData';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
 let products: Product[] = [...seedProducts];
+
+// Add reset function for testing
+export const resetProducts = () => {
+  products = [...seedProducts];
+};
 
 // Create a new product
 router.post('/', (req, res) => {
@@ -116,7 +147,19 @@ router.post('/', (req, res) => {
 
 // Get all products
 router.get('/', (req, res) => {
-  res.json(products);
+  const params = parsePaginationParams(req.query as Record<string, string>);
+  let filteredProducts = products;
+  if (req.query.hasDiscount !== undefined) {
+    const wantDiscount = req.query.hasDiscount === 'true';
+    filteredProducts = products.filter(p =>
+      wantDiscount ? p.discount !== undefined : p.discount === undefined
+    );
+  }
+  const filters = {
+    supplierId: req.query.supplierId,
+  };
+  const result = applyPaginationSortFilter(filteredProducts, params, filters as Record<string, unknown>, ['name', 'price', 'sku']);
+  res.json(result);
 });
 
 // Get a product by ID

@@ -9,17 +9,43 @@
  * @swagger
  * /api/orders:
  *   get:
- *     summary: Returns all orders
+ *     summary: Returns a paginated list of orders
  *     tags: [Orders]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [orderDate, status]
+ *         description: Field to sort by
+ *       - $ref: '#/components/parameters/sortOrderParam'
+ *       - in: query
+ *         name: branchId
+ *         schema:
+ *           type: integer
+ *         description: Filter by branch ID
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, processing, shipped, delivered, cancelled]
+ *         description: Filter by order status
  *     responses:
  *       200:
- *         description: List of all orders
+ *         description: Paginated list of orders
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Order'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Order'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new order
  *     tags: [Orders]
@@ -102,10 +128,16 @@
 import express from 'express';
 import { Order } from '../models/order';
 import { orders as seedOrders } from '../seedData';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
 let orders: Order[] = [...seedOrders];
+
+// Add reset function for testing
+export const resetOrders = () => {
+  orders = [...seedOrders];
+};
 
 // Create a new order
 router.post('/', (req, res) => {
@@ -116,7 +148,13 @@ router.post('/', (req, res) => {
 
 // Get all orders
 router.get('/', (req, res) => {
-  res.json(orders);
+  const params = parsePaginationParams(req.query as Record<string, string>);
+  const filters = {
+    branchId: req.query.branchId,
+    status: req.query.status,
+  };
+  const result = applyPaginationSortFilter(orders, params, filters as Record<string, unknown>, ['orderDate', 'status']);
+  res.json(result);
 });
 
 // Get an order by ID

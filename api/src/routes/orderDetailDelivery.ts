@@ -9,17 +9,35 @@
  * @swagger
  * /api/order-detail-deliveries:
  *   get:
- *     summary: Returns all order detail deliveries
+ *     summary: Returns a paginated list of order detail deliveries
  *     tags: [Order Detail Deliveries]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: orderDetailId
+ *         schema:
+ *           type: integer
+ *         description: Filter by order detail ID
+ *       - in: query
+ *         name: deliveryId
+ *         schema:
+ *           type: integer
+ *         description: Filter by delivery ID
  *     responses:
  *       200:
- *         description: List of all order detail deliveries
+ *         description: Paginated list of order detail deliveries
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/OrderDetailDelivery'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/OrderDetailDelivery'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new order detail delivery
  *     tags: [Order Detail Deliveries]
@@ -102,10 +120,16 @@
 import express from 'express';
 import { OrderDetailDelivery } from '../models/orderDetailDelivery';
 import { orderDetailDeliveries as seedOrderDetailDeliveries } from '../seedData';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
 let orderDetailDeliveries: OrderDetailDelivery[] = [...seedOrderDetailDeliveries];
+
+// Add reset function for testing
+export const resetOrderDetailDeliveries = () => {
+  orderDetailDeliveries = [...seedOrderDetailDeliveries];
+};
 
 // Create a new order detail delivery
 router.post('/', (req, res) => {
@@ -116,7 +140,13 @@ router.post('/', (req, res) => {
 
 // Get all order detail deliveries
 router.get('/', (req, res) => {
-  res.json(orderDetailDeliveries);
+  const params = parsePaginationParams(req.query as Record<string, string>);
+  const filters = {
+    orderDetailId: req.query.orderDetailId,
+    deliveryId: req.query.deliveryId,
+  };
+  const result = applyPaginationSortFilter(orderDetailDeliveries, params, filters as Record<string, unknown>, []);
+  res.json(result);
 });
 
 // Get an order detail delivery by ID
