@@ -9,11 +9,29 @@
  * @swagger
  * /api/orders:
  *   get:
- *     summary: Returns all orders
+ *     summary: Returns all orders, optionally filtered and sorted
  *     tags: [Orders]
+ *     parameters:
+ *       - in: query
+ *         name: branchId
+ *         schema:
+ *           type: integer
+ *         description: Filter orders by branch ID
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [date]
+ *         description: Sort field
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort direction (default desc)
  *     responses:
  *       200:
- *         description: List of all orders
+ *         description: List of orders
  *         content:
  *           application/json:
  *             schema:
@@ -107,6 +125,9 @@ const router = express.Router();
 
 let orders: Order[] = [...seedOrders];
 
+export const resetOrders = () => { orders = [...seedOrders]; };
+export const getOrders = () => orders;
+
 // Create a new order
 router.post('/', (req, res) => {
   const newOrder: Order = req.body;
@@ -114,9 +135,24 @@ router.post('/', (req, res) => {
   res.status(201).json(newOrder);
 });
 
-// Get all orders
+// Get all orders, optionally filtered by branchId and sorted by date
 router.get('/', (req, res) => {
-  res.json(orders);
+  const { branchId, sortBy, order } = req.query;
+  let result = [...orders];
+
+  if (branchId !== undefined) {
+    const id = parseInt(branchId as string, 10);
+    result = result.filter(o => o.branchId === id);
+  }
+
+  if (sortBy === 'date') {
+    result.sort((a, b) => {
+      const diff = new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
+      return order === 'asc' ? diff : -diff;
+    });
+  }
+
+  res.json(result);
 });
 
 // Get an order by ID
