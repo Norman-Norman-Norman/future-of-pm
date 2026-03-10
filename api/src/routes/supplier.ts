@@ -102,13 +102,14 @@
 import express from 'express';
 import { Supplier } from '../models/supplier';
 import { suppliers as seedSuppliers } from '../seedData';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
 let suppliers: Supplier[] = [...seedSuppliers];
 
 // Create a new supplier
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
     const newSupplier = req.body as Supplier;
     suppliers.push(newSupplier);
     res.status(201).json(newSupplier);
@@ -130,7 +131,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a supplier by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticateToken, (req, res) => {
     const index = suppliers.findIndex(s => s.supplierId === parseInt(req.params.id));
     if (index !== -1) {
         suppliers[index] = req.body;
@@ -141,7 +142,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete a supplier by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticateToken, (req, res) => {
     const index = suppliers.findIndex(s => s.supplierId === parseInt(req.params.id));
     if (index !== -1) {
         suppliers.splice(index, 1);
