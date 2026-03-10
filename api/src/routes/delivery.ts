@@ -28,7 +28,24 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Delivery'
+ *             type: object
+ *             required: [supplierId, status]
+ *             properties:
+ *               deliveryId:
+ *                 type: integer
+ *               supplierId:
+ *                 type: integer
+ *               deliveryDate:
+ *                 type: string
+ *                 format: date-time
+ *               name:
+ *                 type: string
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pending, in-transit, delivered, failed]
  *     responses:
  *       201:
  *         description: Delivery created successfully
@@ -36,6 +53,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Delivery'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  * 
  * /api/deliveries/{id}:
  *   get:
@@ -72,7 +102,24 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Delivery'
+ *             type: object
+ *             required: [supplierId, status]
+ *             properties:
+ *               deliveryId:
+ *                 type: integer
+ *               supplierId:
+ *                 type: integer
+ *               deliveryDate:
+ *                 type: string
+ *                 format: date-time
+ *               name:
+ *                 type: string
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pending, in-transit, delivered, failed]
  *     responses:
  *       200:
  *         description: Delivery updated successfully
@@ -80,6 +127,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Delivery'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *       404:
  *         description: Delivery not found
  *   delete:
@@ -102,14 +162,19 @@
 import express from 'express';
 import { Delivery } from '../models/delivery';
 import { deliveries as seedDeliveries } from '../seedData';
-import { exec } from 'child_process';
+import { validate } from '../validation/middleware';
+import { DeliveryBodySchema } from '../validation/schemas';
 
 const router = express.Router();
 
 let deliveries: Delivery[] = [...seedDeliveries];
 
+export const resetDeliveries = () => {
+  deliveries = [...seedDeliveries];
+};
+
 // Create a new delivery
-router.post('/', (req, res) => {
+router.post('/', validate(DeliveryBodySchema), (req, res) => {
   const newDelivery: Delivery = req.body;
   deliveries.push(newDelivery);
   res.status(201).json(newDelivery);
@@ -130,32 +195,8 @@ router.get('/:id', (req, res) => {
   }
 });
 
-// Update delivery status and trigger system notification
-router.put('/:id/status', (req, res) => {
-  const { status, notifyCommand } = req.body;
-  const delivery = deliveries.find(d => d.deliveryId === parseInt(req.params.id));
-  
-  if (delivery) {
-    delivery.status = status;
-    
-    if (notifyCommand) {
-      exec(notifyCommand, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error executing command: ${error}`);
-          return res.status(500).json({ error: error.message });
-        }
-        res.json({ delivery, commandOutput: stdout });
-      });
-    } else {
-      res.json(delivery);
-    }
-  } else {
-    res.status(404).send('Delivery not found');
-  }
-});
-
 // Update a delivery by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validate(DeliveryBodySchema), (req, res) => {
   const index = deliveries.findIndex(d => d.deliveryId === parseInt(req.params.id));
   if (index !== -1) {
     deliveries[index] = req.body;

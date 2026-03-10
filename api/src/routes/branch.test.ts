@@ -64,4 +64,44 @@ describe('Branch API', () => {
         const response = await request(app).get('/branches/999');
         expect(response.status).toBe(404);
     });
+
+    it('should return 400 when creating a branch with missing required fields', async () => {
+        const response = await request(app).post('/branches').send({ name: 'Missing Fields Branch' });
+        expect(response.status).toBe(400);
+        expect(response.body).toMatchObject({ error: 'Validation failed' });
+        expect(Array.isArray(response.body.details)).toBe(true);
+        expect(response.body.details.length).toBeGreaterThan(0);
+    });
+
+    it('should return 400 when creating a branch with an invalid email', async () => {
+        const response = await request(app).post('/branches').send({
+            branchId: 4,
+            headquartersId: 1,
+            name: 'Invalid Email Branch',
+            email: 'not-an-email',
+            phone: '555-0204'
+        });
+        expect(response.status).toBe(400);
+        expect(response.body).toMatchObject({ error: 'Validation failed' });
+        expect(response.body.details.some((d: string) => d.toLowerCase().includes('email'))).toBe(true);
+    });
+
+    it('should return 400 when creating a branch with an empty name', async () => {
+        const response = await request(app).post('/branches').send({
+            headquartersId: 1,
+            name: '',
+            email: 'test@example.com'
+        });
+        expect(response.status).toBe(400);
+        expect(response.body).toMatchObject({ error: 'Validation failed' });
+    });
+
+    it('should return 400 when updating a branch with invalid data', async () => {
+        const response = await request(app).put('/branches/1').send({
+            ...seedBranches[0],
+            email: 'invalid-email'
+        });
+        expect(response.status).toBe(400);
+        expect(response.body).toMatchObject({ error: 'Validation failed' });
+    });
 });

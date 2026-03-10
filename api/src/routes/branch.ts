@@ -28,7 +28,28 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Branch'
+ *             type: object
+ *             required: [headquartersId, name, email]
+ *             properties:
+ *               branchId:
+ *                 type: integer
+ *               headquartersId:
+ *                 type: integer
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               contactPerson:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               phone:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Branch created successfully
@@ -36,6 +57,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Branch'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  * 
  * /api/branches/{id}:
  *   get:
@@ -72,7 +106,28 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Branch'
+ *             type: object
+ *             required: [headquartersId, name, email]
+ *             properties:
+ *               branchId:
+ *                 type: integer
+ *               headquartersId:
+ *                 type: integer
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               contactPerson:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               phone:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Branch updated successfully
@@ -80,6 +135,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Branch'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *       404:
  *         description: Branch not found
  *   delete:
@@ -102,6 +170,8 @@
 import express from 'express';
 import { Branch } from '../models/branch';
 import { branches as seedBranches } from '../seedData';
+import { validate } from '../validation/middleware';
+import { BranchBodySchema } from '../validation/schemas';
 
 const router = express.Router();
 
@@ -113,7 +183,7 @@ export const resetBranches = () => {
 };
 
 // Create a new branch
-router.post('/', (req, res) => {
+router.post('/', validate(BranchBodySchema), (req, res) => {
   const newBranch: Branch = req.body;
   branches.push(newBranch);
   res.status(201).json(newBranch);
@@ -135,7 +205,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a branch by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validate(BranchBodySchema), (req, res) => {
   const index = branches.findIndex(b => b.branchId === parseInt(req.params.id));
   if (index !== -1) {
     branches[index] = req.body;

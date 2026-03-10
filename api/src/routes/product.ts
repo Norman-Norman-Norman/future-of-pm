@@ -28,7 +28,35 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Product'
+ *             type: object
+ *             required: [supplierId, name, price, sku]
+ *             properties:
+ *               productId:
+ *                 type: integer
+ *               supplierId:
+ *                 type: integer
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *                 minimum: 0.01
+ *                 description: Must be greater than 0
+ *               sku:
+ *                 type: string
+ *                 pattern: '^[a-zA-Z0-9-]+$'
+ *                 description: Alphanumeric characters and hyphens only
+ *               unit:
+ *                 type: string
+ *               imgName:
+ *                 type: string
+ *               discount:
+ *                 type: number
+ *                 minimum: 0
+ *                 maximum: 1
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -36,6 +64,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  * 
  * /api/products/{id}:
  *   get:
@@ -72,7 +113,33 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Product'
+ *             type: object
+ *             required: [supplierId, name, price, sku]
+ *             properties:
+ *               productId:
+ *                 type: integer
+ *               supplierId:
+ *                 type: integer
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *                 minimum: 0.01
+ *               sku:
+ *                 type: string
+ *                 pattern: '^[a-zA-Z0-9-]+$'
+ *               unit:
+ *                 type: string
+ *               imgName:
+ *                 type: string
+ *               discount:
+ *                 type: number
+ *                 minimum: 0
+ *                 maximum: 1
  *     responses:
  *       200:
  *         description: Product updated successfully
@@ -80,6 +147,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *       404:
  *         description: Product not found
  *   delete:
@@ -102,13 +182,19 @@
 import express from 'express';
 import { Product } from '../models/product';
 import { products as seedProducts } from '../seedData';
+import { validate } from '../validation/middleware';
+import { ProductBodySchema } from '../validation/schemas';
 
 const router = express.Router();
 
 let products: Product[] = [...seedProducts];
 
+export const resetProducts = () => {
+  products = [...seedProducts];
+};
+
 // Create a new product
-router.post('/', (req, res) => {
+router.post('/', validate(ProductBodySchema), (req, res) => {
   const newProduct: Product = req.body;
   products.push(newProduct);
   res.status(201).json(newProduct);
@@ -130,7 +216,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a product by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validate(ProductBodySchema), (req, res) => {
   const index = products.findIndex(p => p.productId === parseInt(req.params.id));
   if (index !== -1) {
     products[index] = req.body;

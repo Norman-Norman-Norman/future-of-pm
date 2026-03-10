@@ -28,7 +28,24 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Order'
+ *             type: object
+ *             required: [branchId, status]
+ *             properties:
+ *               orderId:
+ *                 type: integer
+ *               branchId:
+ *                 type: integer
+ *               orderDate:
+ *                 type: string
+ *                 format: date-time
+ *               name:
+ *                 type: string
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pending, processing, shipped, delivered, cancelled]
  *     responses:
  *       201:
  *         description: Order created successfully
@@ -36,6 +53,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  * 
  * /api/orders/{id}:
  *   get:
@@ -72,7 +102,24 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Order'
+ *             type: object
+ *             required: [branchId, status]
+ *             properties:
+ *               orderId:
+ *                 type: integer
+ *               branchId:
+ *                 type: integer
+ *               orderDate:
+ *                 type: string
+ *                 format: date-time
+ *               name:
+ *                 type: string
+ *                 maxLength: 200
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pending, processing, shipped, delivered, cancelled]
  *     responses:
  *       200:
  *         description: Order updated successfully
@@ -80,6 +127,19 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *       404:
  *         description: Order not found
  *   delete:
@@ -102,13 +162,19 @@
 import express from 'express';
 import { Order } from '../models/order';
 import { orders as seedOrders } from '../seedData';
+import { validate } from '../validation/middleware';
+import { OrderBodySchema } from '../validation/schemas';
 
 const router = express.Router();
 
 let orders: Order[] = [...seedOrders];
 
+export const resetOrders = () => {
+  orders = [...seedOrders];
+};
+
 // Create a new order
-router.post('/', (req, res) => {
+router.post('/', validate(OrderBodySchema), (req, res) => {
   const newOrder: Order = req.body;
   orders.push(newOrder);
   res.status(201).json(newOrder);
@@ -130,7 +196,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update an order by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validate(OrderBodySchema), (req, res) => {
   const index = orders.findIndex(o => o.orderId === parseInt(req.params.id));
   if (index !== -1) {
     orders[index] = req.body;
