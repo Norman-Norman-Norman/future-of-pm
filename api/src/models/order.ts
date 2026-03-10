@@ -23,10 +23,16 @@
  *           type: string
  *           description: The current status of the order
  *           enum: [pending, processing, shipped, delivered, cancelled]
- *         totalAmount:
+ *         orderTotal:
  *           type: number
  *           format: float
- *           description: The total amount of the order
+ *           description: The total amount for the order
+ *         shippingAddress:
+ *           type: string
+ *           description: The delivery address for the order
+ *         trackingNumber:
+ *           type: string
+ *           description: The carrier tracking number (optional)
  */
 export interface Order {
     orderId: number;
@@ -35,4 +41,7 @@ export interface Order {
     name: string;
     description: string;
     status: string;
+    orderTotal: number;
+    shippingAddress: string;
+    trackingNumber?: string;
 }
