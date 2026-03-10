@@ -102,11 +102,12 @@
 import express from 'express';
 import { Delivery } from '../models/delivery';
 import { deliveries as seedDeliveries } from '../seedData';
-import { exec } from 'child_process';
 
 const router = express.Router();
 
 let deliveries: Delivery[] = [...seedDeliveries];
+
+export const resetDeliveries = () => { deliveries = [...seedDeliveries]; };
 
 // Create a new delivery
 router.post('/', (req, res) => {
@@ -130,25 +131,22 @@ router.get('/:id', (req, res) => {
   }
 });
 
-// Update delivery status and trigger system notification
+const VALID_STATUSES = ['pending', 'in-transit', 'delivered', 'failed'];
+
+// Update delivery status
 router.put('/:id/status', (req, res) => {
-  const { status, notifyCommand } = req.body;
+  const { status } = req.body;
+
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` });
+  }
+
   const delivery = deliveries.find(d => d.deliveryId === parseInt(req.params.id));
-  
+
   if (delivery) {
     delivery.status = status;
-    
-    if (notifyCommand) {
-      exec(notifyCommand, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error executing command: ${error}`);
-          return res.status(500).json({ error: error.message });
-        }
-        res.json({ delivery, commandOutput: stdout });
-      });
-    } else {
-      res.json(delivery);
-    }
+    console.log(`Delivery ${delivery.deliveryId} status updated to: ${status}`);
+    res.json(delivery);
   } else {
     res.status(404).send('Delivery not found');
   }
