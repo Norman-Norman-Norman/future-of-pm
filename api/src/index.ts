@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import path from 'path';
 import { existsSync } from 'fs';
+import rateLimit from 'express-rate-limit';
 import deliveryRoutes from './routes/delivery';
 import orderDetailDeliveryRoutes from './routes/orderDetailDelivery';
 import productRoutes from './routes/product';
@@ -68,6 +69,15 @@ app.get('/api-docs.json', (req, res) => {
 });
 
 app.use(express.json());
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+app.use('/api/', apiLimiter);
 
 app.use('/api/deliveries', deliveryRoutes);
 app.use('/api/order-detail-deliveries', orderDetailDeliveryRoutes);
