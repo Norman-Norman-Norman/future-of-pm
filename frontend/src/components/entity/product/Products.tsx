@@ -4,6 +4,7 @@ import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+import { exportToCsv } from '../../../utils/exportCsv';
 
 interface Product {
   productId: number;
@@ -36,6 +37,15 @@ export default function Products() {
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleExportCsv = () => {
+    if (!filteredProducts) return;
+    exportToCsv(
+      'products.csv',
+      ['Product ID', 'Name', 'SKU', 'Price', 'Unit', 'Description', 'Supplier ID'],
+      filteredProducts.map((p) => [p.productId, p.name, p.sku, p.price, p.unit, p.description, p.supplierId])
+    );
+  };
 
   const handleQuantityChange = (productId: number, change: number) => {
     setQuantities(prev => ({
@@ -92,7 +102,18 @@ export default function Products() {
     <div className={`min-h-screen ${darkMode ? 'bg-dark' : 'bg-gray-100'} pt-20 pb-16 px-4 transition-colors duration-300`}>
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col space-y-6">
-          <h1 className={`text-3xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>Products</h1>
+          <div className="flex items-center justify-between">
+            <h1 className={`text-3xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>Products</h1>
+            <button
+              onClick={handleExportCsv}
+              className="flex items-center gap-2 bg-primary hover:bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Export CSV
+            </button>
+          </div>
           
           <div className="relative">
             <input

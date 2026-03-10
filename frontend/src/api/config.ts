@@ -50,6 +50,13 @@ export const api = {
         headquarters: '/api/headquarters',
         deliveries: '/api/deliveries',
         orderDetails: '/api/order-details',
-        orderDetailDeliveries: '/api/order-detail-deliveries'
+        orderDetailDeliveries: '/api/order-detail-deliveries',
+        reports: {
+            ordersByStatus: '/api/reports/orders-by-status',
+            inventoryLevels: '/api/reports/inventory-levels',
+            deliveryPerformance: '/api/reports/delivery-performance',
+            productSales: '/api/reports/product-sales',
+            supplierActivity: '/api/reports/supplier-activity',
+        },
     }
 };
