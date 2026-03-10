@@ -218,15 +218,54 @@ export const orders: Order[] = [
         orderDate: new Date().toISOString(),
         name: "Q2 Feline Tech Refresh",
         description: "Quarterly smart cat tech product refresh",
-        status: "pending"
+        status: "pending",
+        orderTotal: 1449.90,
+        shippingAddress: "456 Purrfect Plaza, Meowtown",
+        trackingNumber: undefined
     },
     {
         orderId: 2,
         branchId: 2,
-        orderDate: new Date().toISOString(),
+        orderDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
         name: "Cat Enrichment Bundle",
         description: "Monthly cat entertainment systems restock",
-        status: "processing"
+        status: "processing",
+        orderTotal: 1599.80,
+        shippingAddress: "789 Feline Avenue, Tabby Terrace",
+        trackingNumber: undefined
+    },
+    {
+        orderId: 3,
+        branchId: 1,
+        orderDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+        name: "Smart Home Kit",
+        description: "Smart feeders and fountains for new branch setup",
+        status: "shipped",
+        orderTotal: 989.85,
+        shippingAddress: "456 Purrfect Plaza, Meowtown",
+        trackingNumber: "TRK-2024-00123"
+    },
+    {
+        orderId: 4,
+        branchId: 2,
+        orderDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+        name: "Grooming Station Bundle",
+        description: "ClawMate auto groomers and accessories",
+        status: "delivered",
+        orderTotal: 719.94,
+        shippingAddress: "789 Feline Avenue, Tabby Terrace",
+        trackingNumber: "TRK-2024-00098"
+    },
+    {
+        orderId: 5,
+        branchId: 1,
+        orderDate: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString(),
+        name: "Security Camera Order",
+        description: "ChirpCam window mounts for branch surveillance",
+        status: "cancelled",
+        orderTotal: 299.97,
+        shippingAddress: "456 Purrfect Plaza, Meowtown",
+        trackingNumber: undefined
     }
 ];
 
