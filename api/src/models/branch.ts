@@ -8,6 +8,8 @@
  *         - branchId
  *         - name
  *         - headquartersId
+ *         - description
+ *         - contactPerson
  *       properties:
  *         branchId:
  *           type: integer
@@ -18,6 +20,12 @@
  *         name:
  *           type: string
  *           description: The name of the branch
+ *         description:
+ *           type: string
+ *           description: Additional details about the branch
+ *         contactPerson:
+ *           type: string
+ *           description: Name of the primary contact person at the branch
  *         address:
  *           type: string
  *           description: Physical address of the branch

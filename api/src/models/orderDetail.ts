@@ -10,6 +10,7 @@
  *         - productId
  *         - quantity
  *         - unitPrice
+ *         - notes
  *       properties:
  *         orderDetailId:
  *           type: integer

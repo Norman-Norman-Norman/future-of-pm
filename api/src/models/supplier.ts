@@ -7,6 +7,10 @@
  *       required:
  *         - supplierId
  *         - name
+ *         - description
+ *         - contactPerson
+ *         - email
+ *         - phone
  *       properties:
  *         supplierId:
  *           type: integer
@@ -14,9 +18,9 @@
  *         name:
  *           type: string
  *           description: The name of the supplier
- *         address:
+ *         description:
  *           type: string
- *           description: The physical address of the supplier
+ *           description: Additional details about the supplier
  *         contactPerson:
  *           type: string
  *           description: Name of the primary contact person
@@ -27,9 +31,6 @@
  *         phone:
  *           type: string
  *           description: Contact phone number for the supplier
- *         description:
- *           type: string
- *           description: Additional details about the supplier
  */
 export interface Supplier {
     supplierId: number;

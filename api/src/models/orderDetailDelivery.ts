@@ -8,6 +8,8 @@
  *         - orderDetailDeliveryId
  *         - orderDetailId
  *         - deliveryId
+ *         - quantity
+ *         - notes
  *       properties:
  *         orderDetailDeliveryId:
  *           type: integer
