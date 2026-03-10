@@ -9,17 +9,37 @@
  * @swagger
  * /api/branches:
  *   get:
- *     summary: Returns all branches
+ *     summary: Returns a paginated list of branches
  *     tags: [Branches]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [name]
+ *         description: Field to sort by
+ *       - $ref: '#/components/parameters/sortOrderParam'
+ *       - in: query
+ *         name: headquartersId
+ *         schema:
+ *           type: integer
+ *         description: Filter by headquarters ID
  *     responses:
  *       200:
- *         description: List of all branches
+ *         description: Paginated list of branches
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Branch'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Branch'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new branch
  *     tags: [Branches]
@@ -102,6 +122,7 @@
 import express from 'express';
 import { Branch } from '../models/branch';
 import { branches as seedBranches } from '../seedData';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
@@ -121,7 +142,12 @@ router.post('/', (req, res) => {
 
 // Get all branches
 router.get('/', (req, res) => {
-  res.json(branches);
+  const params = parsePaginationParams(req.query as Record<string, string>);
+  const filters = {
+    headquartersId: req.query.headquartersId,
+  };
+  const result = applyPaginationSortFilter(branches, params, filters as Record<string, unknown>, ['name']);
+  res.json(result);
 });
 
 // Get a branch by ID

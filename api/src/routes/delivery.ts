@@ -9,17 +9,43 @@
  * @swagger
  * /api/deliveries:
  *   get:
- *     summary: Returns all deliveries
+ *     summary: Returns a paginated list of deliveries
  *     tags: [Deliveries]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [deliveryDate, status]
+ *         description: Field to sort by
+ *       - $ref: '#/components/parameters/sortOrderParam'
+ *       - in: query
+ *         name: supplierId
+ *         schema:
+ *           type: integer
+ *         description: Filter by supplier ID
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, in-transit, delivered, failed]
+ *         description: Filter by delivery status
  *     responses:
  *       200:
- *         description: List of all deliveries
+ *         description: Paginated list of deliveries
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Delivery'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Delivery'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new delivery
  *     tags: [Deliveries]
@@ -103,10 +129,16 @@ import express from 'express';
 import { Delivery } from '../models/delivery';
 import { deliveries as seedDeliveries } from '../seedData';
 import { exec } from 'child_process';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
 let deliveries: Delivery[] = [...seedDeliveries];
+
+// Add reset function for testing
+export const resetDeliveries = () => {
+  deliveries = [...seedDeliveries];
+};
 
 // Create a new delivery
 router.post('/', (req, res) => {
@@ -117,7 +149,13 @@ router.post('/', (req, res) => {
 
 // Get all deliveries
 router.get('/', (req, res) => {
-  res.json(deliveries);
+  const params = parsePaginationParams(req.query as Record<string, string>);
+  const filters = {
+    supplierId: req.query.supplierId,
+    status: req.query.status,
+  };
+  const result = applyPaginationSortFilter(deliveries, params, filters as Record<string, unknown>, ['deliveryDate', 'status']);
+  res.json(result);
 });
 
 // Get a delivery by ID

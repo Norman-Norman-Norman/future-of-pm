@@ -9,17 +9,35 @@
  * @swagger
  * /api/order-details:
  *   get:
- *     summary: Returns all order details
+ *     summary: Returns a paginated list of order details
  *     tags: [Order Details]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: orderId
+ *         schema:
+ *           type: integer
+ *         description: Filter by order ID
+ *       - in: query
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         description: Filter by product ID
  *     responses:
  *       200:
- *         description: List of all order details
+ *         description: Paginated list of order details
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/OrderDetail'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/OrderDetail'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new order detail
  *     tags: [Order Details]
@@ -102,10 +120,16 @@
 import express from 'express';
 import { OrderDetail } from '../models/orderDetail';
 import { orderDetails as seedOrderDetails } from '../seedData';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
 let orderDetails: OrderDetail[] = [...seedOrderDetails];
+
+// Add reset function for testing
+export const resetOrderDetails = () => {
+  orderDetails = [...seedOrderDetails];
+};
 
 // Create a new order detail
 router.post('/', (req, res) => {
@@ -116,7 +140,13 @@ router.post('/', (req, res) => {
 
 // Get all order details
 router.get('/', (req, res) => {
-  res.json(orderDetails);
+  const params = parsePaginationParams(req.query as Record<string, string>);
+  const filters = {
+    orderId: req.query.orderId,
+    productId: req.query.productId,
+  };
+  const result = applyPaginationSortFilter(orderDetails, params, filters as Record<string, unknown>, []);
+  res.json(result);
 });
 
 // Get an order detail by ID

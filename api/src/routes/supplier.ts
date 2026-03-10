@@ -9,17 +9,32 @@
  * @swagger
  * /api/suppliers:
  *   get:
- *     summary: Returns all suppliers
+ *     summary: Returns a paginated list of suppliers
  *     tags: [Suppliers]
+ *     parameters:
+ *       - $ref: '#/components/parameters/pageParam'
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [name]
+ *         description: Field to sort by
+ *       - $ref: '#/components/parameters/sortOrderParam'
  *     responses:
  *       200:
- *         description: List of all suppliers
+ *         description: Paginated list of suppliers
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Supplier'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Supplier'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/PaginationMeta'
  *   post:
  *     summary: Create a new supplier
  *     tags: [Suppliers]
@@ -102,10 +117,16 @@
 import express from 'express';
 import { Supplier } from '../models/supplier';
 import { suppliers as seedSuppliers } from '../seedData';
+import { parsePaginationParams, applyPaginationSortFilter } from '../utils/pagination';
 
 const router = express.Router();
 
 let suppliers: Supplier[] = [...seedSuppliers];
+
+// Add reset function for testing
+export const resetSuppliers = () => {
+    suppliers = [...seedSuppliers];
+};
 
 // Create a new supplier
 router.post('/', (req, res) => {
@@ -116,7 +137,9 @@ router.post('/', (req, res) => {
 
 // Get all suppliers
 router.get('/', (req, res) => {
-    res.json(suppliers);
+    const params = parsePaginationParams(req.query as Record<string, string>);
+    const result = applyPaginationSortFilter(suppliers, params, {}, ['name']);
+    res.json(result);
 });
 
 // Get a supplier by ID
