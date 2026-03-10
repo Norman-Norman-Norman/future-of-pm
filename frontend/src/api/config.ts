@@ -27,6 +27,13 @@ const getBaseUrl = () => {
     // Auto-detect protocol for local development
     const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
     const protocolToUse = protocol.includes('https') ? 'https' : 'http';
+
+    // In production (non-localhost), use the same origin since API and frontend are co-hosted
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+        console.log('Using same-origin API URL');
+        return window.location.origin;
+    }
+
     console.log(`Using default localhost URL with ${protocolToUse} protocol`);
     return `${protocolToUse}://localhost:3000`;
 };

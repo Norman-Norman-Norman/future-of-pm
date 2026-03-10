@@ -2,6 +2,8 @@ import express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
+import path from 'path';
+import { existsSync } from 'fs';
 import deliveryRoutes from './routes/delivery';
 import orderDetailDeliveryRoutes from './routes/orderDetailDelivery';
 import productRoutes from './routes/product';
@@ -78,6 +80,18 @@ app.use('/api/suppliers', supplierRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
+
+// Serve frontend static files in production
+const publicPath = path.join(__dirname, 'public');
+if (existsSync(publicPath)) {
+  app.use(express.static(publicPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/api-docs')) {
+      return next();
+    }
+    res.sendFile(path.join(publicPath, 'index.html'));
+  });
+}
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

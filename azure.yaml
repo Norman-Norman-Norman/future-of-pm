@@ -1,0 +1,28 @@
+name: octocat-supply
+metadata:
+  template: octocat-supply
+services:
+  api:
+    project: ./api
+    language: js
+    host: appservice
+    hooks:
+      prepackage:
+        shell: pwsh
+        run: |
+          # Navigate to monorepo root
+          Set-Location ..
+
+          # Install all workspace dependencies from root
+          npm install
+
+          # Build the frontend
+          npm run build --workspace=frontend
+
+          # Build the API
+          npm run build --workspace=api
+
+          # Copy frontend build output into API dist for co-hosting
+          $publicDir = Join-Path "api" "dist" "public"
+          if (-not (Test-Path $publicDir)) { New-Item -ItemType Directory -Path $publicDir -Force }
+          Copy-Item -Path "frontend/dist/*" -Destination $publicDir -Recurse -Force
