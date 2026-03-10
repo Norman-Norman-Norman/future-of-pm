@@ -21,8 +21,14 @@ function ThemedApp() {
   return (
     <Router>
       <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-dark' : 'bg-gray-100'} transition-colors duration-300`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded focus:font-medium"
+        >
+          Skip to main content
+        </a>
         <Navigation />
-        <main className="flex-grow">
+        <main id="main-content" className="flex-grow">
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/about" element={<About />} />

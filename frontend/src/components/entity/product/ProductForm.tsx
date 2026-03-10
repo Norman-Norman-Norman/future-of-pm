@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
@@ -40,6 +40,21 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
       imgName: ''
     }
   );
+  const firstFocusableRef = useRef<HTMLInputElement>(null);
+
+  // Focus the first input when modal opens
+  useEffect(() => {
+    firstFocusableRef.current?.focus();
+  }, []);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,80 +72,100 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="product-form-title"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    >
       <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 w-full max-w-md shadow-xl transition-colors duration-300`}>
-        <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
+        <h2 id="product-form-title" className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
           {product ? 'Edit Product' : 'Add New Product'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Name</label>
+            <label htmlFor="product-name" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Name</label>
             <input
+              id="product-name"
               type="text"
+              ref={firstFocusableRef}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
             />
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Description</label>
+            <label htmlFor="product-description" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Description</label>
             <textarea
+              id="product-description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
             />
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Price</label>
+            <label htmlFor="product-price" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Price</label>
             <input
+              id="product-price"
               type="number"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
               min="0"
               step="0.01"
             />
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>SKU</label>
+            <label htmlFor="product-sku" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>SKU</label>
             <input
+              id="product-sku"
               type="text"
               value={formData.sku}
               onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
             />
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Unit</label>
+            <label htmlFor="product-unit" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Unit</label>
             <input
+              id="product-unit"
               type="text"
               value={formData.unit}
               onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
             />
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Image Name</label>
+            <label htmlFor="product-img-name" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Image Name</label>
             <input
+              id="product-img-name"
               type="text"
               value={formData.imgName}
               onChange={(e) => setFormData({ ...formData, imgName: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
             />
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Supplier</label>
+            <label htmlFor="product-supplier" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Supplier</label>
             <select
+              id="product-supplier"
               value={formData.supplierId}
               onChange={(e) => setFormData({ ...formData, supplierId: parseInt(e.target.value) })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
             >
               {suppliers.map((supplier) => (
                 <option key={supplier.supplierId} value={supplier.supplierId}>
@@ -140,8 +175,9 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
             </select>
           </div>
           <div>
-            <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Discount (%)</label>
+            <label htmlFor="product-discount" className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Discount (%)</label>
             <input
+              id="product-discount"
               type="number"
               value={formData.discount !== undefined ? formData.discount * 100 : ''}
               onChange={(e) => {
@@ -149,24 +185,25 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
                 setFormData({ ...formData, discount: value });
               }}
               placeholder="Enter discount percentage (e.g. 25 for 25%)"
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               min="0"
               max="100"
               step="1"
+              aria-describedby="product-discount-hint"
             />
-            <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Leave empty for no discount</p>
+            <p id="product-discount-hint" className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Leave empty for no discount</p>
           </div>
           <div className="flex justify-end space-x-2">
             <button
               type="button"
               onClick={onClose}
-              className={`px-4 py-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'} ${darkMode ? 'text-white' : 'text-gray-800'} rounded hover:${darkMode ? 'bg-gray-500' : 'bg-gray-400'} transition-colors duration-300`}
+              className={`px-4 py-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'} ${darkMode ? 'text-white' : 'text-gray-800'} rounded hover:${darkMode ? 'bg-gray-500' : 'bg-gray-400'} transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors duration-300"
+              className="px-4 py-2 bg-primary text-white rounded hover:bg-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               {product ? 'Update' : 'Create'}
             </button>

@@ -36,9 +36,13 @@ export default function Login() {
         
         {error && (
           <div 
+            id="login-error"
+            role="alert"
+            aria-live="assertive"
             className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4"
-            dangerouslySetInnerHTML={{ __html: error }}
-          />
+          >
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -49,9 +53,11 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded px-3 py-2 transition-colors duration-300`}
+              className={`w-full ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded px-3 py-2 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
               autoFocus
+              aria-required="true"
+              aria-describedby={error ? 'login-error' : undefined}
             />
           </div>
 
@@ -62,14 +68,16 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`w-full ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded px-3 py-2 transition-colors duration-300`}
+              className={`w-full ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded px-3 py-2 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary`}
               required
+              aria-required="true"
+              aria-describedby={error ? 'login-error' : undefined}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary hover:bg-accent text-white py-2 px-4 rounded transition-colors"
+            className="w-full bg-primary hover:bg-accent text-white py-2 px-4 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             Login
           </button>

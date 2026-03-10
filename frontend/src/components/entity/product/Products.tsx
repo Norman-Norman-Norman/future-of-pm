@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
@@ -31,6 +31,9 @@ export default function Products() {
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
   const { addToCart } = useCart();
+  const modalCloseRef = useRef<HTMLButtonElement>(null);
+  const promoCloseRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLDivElement | null>(null);
 
   const filteredProducts = products?.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,16 +64,51 @@ export default function Products() {
     }
   };
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = (product: Product, element: HTMLDivElement) => {
+    triggerRef.current = element;
     setSelectedProduct(product);
     setShowModal(true);
   };
+
+  const closeProductModal = useCallback(() => {
+    setShowModal(false);
+    triggerRef.current?.focus();
+  }, []);
+
+  const closePromo = useCallback(() => {
+    setShowPromo(false);
+  }, []);
+
+  // Focus the close button when modals open
+  useEffect(() => {
+    if (showModal && modalCloseRef.current) {
+      modalCloseRef.current.focus();
+    }
+  }, [showModal]);
+
+  useEffect(() => {
+    if (showPromo && promoCloseRef.current) {
+      promoCloseRef.current.focus();
+    }
+  }, [showPromo]);
+
+  // Close modals on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showModal) closeProductModal();
+        else if (showPromo) closePromo();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showModal, showPromo, closeProductModal, closePromo]);
 
   if (isLoading) {
     return (
       <div className={`min-h-screen ${darkMode ? 'bg-dark' : 'bg-gray-100'} pt-20 px-4 transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center h-64">
+          <div role="status" aria-label="Loading products" className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
           </div>
         </div>
@@ -111,6 +149,8 @@ export default function Products() {
               strokeWidth="2" 
               viewBox="0 0 24 24" 
               stroke="currentColor"
+              aria-hidden="true"
+              focusable="false"
             >
               <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
@@ -120,8 +160,12 @@ export default function Products() {
             {filteredProducts?.map(product => (
               <div key={product.productId} className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(118,184,82,0.3)] flex flex-col`}>
                 <div 
-                  className={`relative h-56 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} transition-colors duration-300 cursor-pointer`}
-                  onClick={() => handleProductClick(product)}
+                  className={`relative h-56 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} transition-colors duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary`}
+                  onClick={(e) => handleProductClick(product, e.currentTarget)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProductClick(product, e.currentTarget); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View details for ${product.name}`}
                 >
                   <img 
                     src={`/${product.imgName}`} 
@@ -200,17 +244,25 @@ export default function Products() {
 
       {/* Product Modal */}
       {showModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowModal(false)}>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="product-modal-title"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={closeProductModal}
+        >
           <div 
             className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl transition-colors duration-300`}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-end">
               <button 
-                onClick={() => setShowModal(false)}
-                className={`${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-300`}
+                ref={modalCloseRef}
+                onClick={closeProductModal}
+                aria-label="Close product details"
+                className={`${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded`}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -222,7 +274,7 @@ export default function Products() {
                 className="w-full h-auto object-contain max-h-[400px]"
               />
             </div>
-            <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
+            <h2 id="product-modal-title" className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
               {selectedProduct.name}
             </h2>
             <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-lg transition-colors duration-300`}>
@@ -234,15 +286,20 @@ export default function Products() {
 
       {/* Promo Popup - Chef's Hat Sale */}
       {showPromo && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="promo-title"
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50"
+        >
           <div 
             className={`${darkMode ? 'bg-gray-800 border-primary' : 'bg-white border-primary'} border-2 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center transition-colors duration-300`}
             onClick={e => e.stopPropagation()}
           >
-            <div className="mb-4">
+            <div className="mb-4" aria-hidden="true">
               <span className="text-5xl">🎉</span>
             </div>
-            <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2`}>
+            <h2 id="promo-title" className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2`}>
               EXCLUSIVE SALE!
             </h2>
             <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-xl p-4 mb-4`}>
@@ -267,8 +324,9 @@ export default function Products() {
             </div>
             <div>
               <button
-                onClick={() => setShowPromo(false)}
-                className="w-full bg-primary hover:bg-accent text-white font-semibold py-3 px-6 rounded-lg transition-colors text-lg"
+                ref={promoCloseRef}
+                onClick={closePromo}
+                className="w-full bg-primary hover:bg-accent text-white font-semibold py-3 px-6 rounded-lg transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 OK
               </button>
