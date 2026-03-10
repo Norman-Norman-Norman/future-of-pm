@@ -6,30 +6,46 @@
  *       type: object
  *       required:
  *         - deliveryId
- *         - orderId
+ *         - supplierId
+ *         - deliveryDate
+ *         - name
+ *         - description
  *         - status
  *       properties:
  *         deliveryId:
  *           type: integer
  *           description: The unique identifier for the delivery
- *         orderId:
+ *         supplierId:
  *           type: integer
- *           description: The ID of the order being delivered
+ *           description: The ID of the supplier for this delivery
+ *         deliveryDate:
+ *           type: string
+ *           format: date-time
+ *           description: Scheduled delivery date
+ *         name:
+ *           type: string
+ *           description: Name of the delivery
+ *         description:
+ *           type: string
+ *           description: Description of the delivery
  *         status:
  *           type: string
  *           description: Current status of the delivery
- *           enum: [pending, in-transit, delivered, failed]
- *         scheduledDate:
+ *           enum: [pending, in-transit, out-for-delivery, delivered, failed]
+ *         trackingNumber:
+ *           type: string
+ *           description: Carrier tracking number
+ *         estimatedDelivery:
  *           type: string
  *           format: date-time
- *           description: Scheduled delivery date and time
- *         actualDeliveryDate:
+ *           description: Expected delivery date
+ *         actualDelivery:
  *           type: string
  *           format: date-time
- *           description: Actual delivery date and time
- *         notes:
+ *           description: Actual delivery date
+ *         carrier:
  *           type: string
- *           description: Additional notes about the delivery
+ *           description: Shipping carrier name
  */
 export interface Delivery {
     deliveryId: number;
@@ -38,4 +54,8 @@ export interface Delivery {
     name: string;
     description: string;
     status: string;
+    trackingNumber?: string;
+    estimatedDelivery?: string;
+    actualDelivery?: string;
+    carrier?: string;
 }

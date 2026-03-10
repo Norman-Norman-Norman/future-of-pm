@@ -266,7 +266,10 @@ export const deliveries: Delivery[] = [
         deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
         name: "PurrTech Smart Home Bundle",
         description: "Premium cat tech products delivery for smart cat homes",
-        status: "pending"
+        status: "pending",
+        trackingNumber: "PURR-2024-001",
+        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        carrier: "PurrEx Shipping"
     },
     {
         deliveryId: 2,
@@ -274,7 +277,22 @@ export const deliveries: Delivery[] = [
         deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
         name: "WhiskerWare Entertainment Package",
         description: "Entertainment and tracking systems for feline companions",
-        status: "in-transit"
+        status: "in-transit",
+        trackingNumber: "WHSK-2024-002",
+        estimatedDelivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        carrier: "FedEx"
+    },
+    {
+        deliveryId: 3,
+        supplierId: 3,
+        deliveryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        name: "CatNip Eco Accessories Bundle",
+        description: "Eco-friendly cat toy and accessories batch delivery",
+        status: "delivered",
+        trackingNumber: "CNIP-2024-003",
+        estimatedDelivery: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+        actualDelivery: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        carrier: "UPS"
     }
 ];
 
