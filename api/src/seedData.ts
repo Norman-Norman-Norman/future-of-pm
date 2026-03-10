@@ -6,6 +6,7 @@ import { Order } from './models/order';
 import { OrderDetail } from './models/orderDetail';
 import { Delivery } from './models/delivery';
 import { OrderDetailDelivery } from './models/orderDetailDelivery';
+import { LoyaltyAccount } from './models/loyalty';
 
 // Suppliers
 export const suppliers: Supplier[] = [
@@ -300,5 +301,50 @@ export const orderDetailDeliveries: OrderDetailDelivery[] = [
         deliveryId: 2,
         quantity: 20,
         notes: "Delivery"
+    }
+];
+
+// Loyalty Accounts
+export const loyaltyAccounts: LoyaltyAccount[] = [
+    {
+        accountId: 1,
+        branchId: 1,
+        totalPoints: 450,
+        lifetimePoints: 450,
+        tier: 'bronze',
+        history: [
+            {
+                transactionId: 1,
+                type: 'earn',
+                points: 450,
+                orderId: 1,
+                description: 'Points earned from order #1',
+                createdAt: new Date('2025-01-15').toISOString()
+            }
+        ]
+    },
+    {
+        accountId: 2,
+        branchId: 2,
+        totalPoints: 1200,
+        lifetimePoints: 1500,
+        tier: 'silver',
+        history: [
+            {
+                transactionId: 1,
+                type: 'earn',
+                points: 1500,
+                orderId: 2,
+                description: 'Points earned from order #2',
+                createdAt: new Date('2025-01-20').toISOString()
+            },
+            {
+                transactionId: 2,
+                type: 'redeem',
+                points: 300,
+                description: 'Points redeemed for $3.00 discount',
+                createdAt: new Date('2025-01-25').toISOString()
+            }
+        ]
     }
 ];

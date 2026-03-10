@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+import PointsRedemption from '../loyalty/PointsRedemption';
 
 const DISCOUNT_RATE = 0.05;
 const SHIPPING_COST = 10;
@@ -8,11 +10,12 @@ const SHIPPING_COST = 10;
 export default function Checkout() {
   const { darkMode } = useTheme();
   const { items, clearCart } = useCart();
+  const [pointsDiscount, setPointsDiscount] = useState(0);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = subtotal * DISCOUNT_RATE;
   const shipping = items.length > 0 ? SHIPPING_COST : 0;
-  const grandTotal = subtotal - discount + shipping;
+  const grandTotal = Math.max(0, subtotal - discount - pointsDiscount + shipping);
 
   if (items.length === 0) {
     return (
@@ -62,6 +65,12 @@ export default function Checkout() {
               <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Discount (5%)</span>
               <span className="text-red-400">-${discount.toFixed(2)}</span>
             </div>
+            {pointsDiscount > 0 && (
+              <div className="flex justify-between">
+                <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>🐾 Paw Points Discount</span>
+                <span className="text-primary">-${pointsDiscount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Shipping</span>
               <span className={darkMode ? 'text-light' : 'text-gray-800'}>${shipping.toFixed(2)}</span>
@@ -72,6 +81,8 @@ export default function Checkout() {
             </div>
           </div>
         </div>
+
+        <PointsRedemption onRedemptionChange={setPointsDiscount} />
 
         <div className="flex gap-4">
           <Link to="/cart" className={`flex-1 text-center py-3.5 rounded-full font-bold transition-colors border-2 border-primary text-primary hover:bg-primary hover:text-white`}>
