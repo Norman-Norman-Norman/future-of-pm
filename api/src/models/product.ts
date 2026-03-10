@@ -32,7 +32,13 @@
  *           type: number
  *           format: float
  *           description: Discount percentage (if applicable) expressed as a decimal (e.g., 0.25 for 25%)
+ *         category:
+ *           type: string
+ *           enum: [health, entertainment, smart-home, feeding, grooming, accessories]
+ *           description: Product category
  */
+export type ProductCategory = 'health' | 'entertainment' | 'smart-home' | 'feeding' | 'grooming' | 'accessories';
+
 export interface Product {
     productId: number;
     supplierId: number;
@@ -43,4 +49,5 @@ export interface Product {
     unit: string;
     imgName: string;
     discount?: number;
+    category?: ProductCategory;
 }
