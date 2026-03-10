@@ -50,6 +50,12 @@ export const api = {
         headquarters: '/api/headquarters',
         deliveries: '/api/deliveries',
         orderDetails: '/api/order-details',
-        orderDetailDeliveries: '/api/order-detail-deliveries'
+        orderDetailDeliveries: '/api/order-detail-deliveries',
+        recommendations: {
+            popular: '/api/recommendations/popular',
+            forYou: '/api/recommendations/for-you',
+            similar: (productId: number) => `/api/recommendations/similar/${productId}`,
+            frequentlyBoughtTogether: (productId: number) => `/api/recommendations/frequently-bought-together/${productId}`,
+        }
     }
 };

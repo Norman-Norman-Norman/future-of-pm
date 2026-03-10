@@ -1,12 +1,30 @@
 import Slider from 'react-slick';
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 import { useTheme } from '../context/ThemeContext';
+import { api } from '../api/config';
+
+interface Product {
+  productId: number;
+  name: string;
+  description: string;
+  price: number;
+  imgName: string;
+  discount?: number;
+}
+
+const fetchPopularProducts = async (): Promise<Product[]> => {
+  const { data } = await axios.get(`${api.baseURL}${api.endpoints.recommendations.popular}`);
+  return data;
+};
 
 export default function Welcome() {
   const sliderRef = useRef<Slider | null>(null);
   const { darkMode } = useTheme();
   const navigate = useNavigate();
+  const { data: popularProducts } = useQuery('popularProducts', fetchPopularProducts);
 
   const sliderSettings = {
     dots: true,
@@ -223,6 +241,53 @@ export default function Welcome() {
               <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-2 transition-colors duration-300`}>Comfort & Wellness</h3>
               <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} transition-colors duration-300`}>Smart beds, feeding solutions, and grooming tools designed to enhance your cat's health and comfort.</p>
             </div>
+          </div>
+        </div>
+
+        {/* Popular Products */}
+        <div className="py-16">
+          <h2 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} text-center mb-12 transition-colors duration-300`}>
+            🔥 Popular Products
+          </h2>
+          {popularProducts && popularProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+              {popularProducts.map(product => (
+                <div
+                  key={product.productId}
+                  className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(118,184,82,0.3)] cursor-pointer flex flex-col`}
+                  onClick={() => navigate('/products')}
+                >
+                  <div className={`h-40 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'}`}>
+                    <img
+                      src={`/${product.imgName}`}
+                      alt={product.name}
+                      className="w-full h-full object-contain p-2"
+                    />
+                  </div>
+                  <div className="p-3 flex flex-col flex-grow">
+                    <h3 className={`text-sm font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-1 line-clamp-2`}>{product.name}</h3>
+                    {product.discount ? (
+                      <div>
+                        <span className="text-gray-500 line-through text-xs mr-1">${product.price.toFixed(2)}</span>
+                        <span className="text-primary font-bold text-sm">${(product.price * (1 - product.discount)).toFixed(2)}</span>
+                      </div>
+                    ) : (
+                      <span className="text-primary font-bold text-sm">${product.price.toFixed(2)}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className={`text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>No popular products available yet.</p>
+          )}
+          <div className="text-center mt-8">
+            <button
+              onClick={() => navigate('/products')}
+              className="bg-primary hover:bg-accent text-white px-8 py-3 rounded-md font-medium transition-colors cursor-pointer"
+            >
+              View All Products
+            </button>
           </div>
         </div>
       </div>

@@ -227,6 +227,38 @@ export const orders: Order[] = [
         name: "Cat Enrichment Bundle",
         description: "Monthly cat entertainment systems restock",
         status: "processing"
+    },
+    {
+        orderId: 3,
+        branchId: 1,
+        orderDate: new Date().toISOString(),
+        name: "Smart Home Cat Bundle",
+        description: "Complete smart home setup for cat care",
+        status: "completed"
+    },
+    {
+        orderId: 4,
+        branchId: 2,
+        orderDate: new Date().toISOString(),
+        name: "Feeding & Hydration Pack",
+        description: "Automated feeding and water solutions",
+        status: "completed"
+    },
+    {
+        orderId: 5,
+        branchId: 1,
+        orderDate: new Date().toISOString(),
+        name: "Play & Enrichment Kit",
+        description: "Interactive toys and enrichment products",
+        status: "completed"
+    },
+    {
+        orderId: 6,
+        branchId: 2,
+        orderDate: new Date().toISOString(),
+        name: "Activity & Treat Bundle",
+        description: "Activity tracking and treat dispensing combo",
+        status: "completed"
     }
 ];
 
@@ -255,6 +287,86 @@ export const orderDetails: OrderDetail[] = [
         quantity: 20,
         unitPrice: 79.99,
         notes: "PawTrack Smart Collars for adoption events"
+    },
+    {
+        orderDetailId: 4,
+        orderId: 3,
+        productId: 1,
+        quantity: 3,
+        unitPrice: 129.99,
+        notes: "SmartFeeders for automated feeding"
+    },
+    {
+        orderDetailId: 5,
+        orderId: 3,
+        productId: 5,
+        quantity: 3,
+        unitPrice: 149.99,
+        notes: "SleepNest ThermoPods for premium comfort"
+    },
+    {
+        orderDetailId: 6,
+        orderId: 3,
+        productId: 6,
+        quantity: 3,
+        unitPrice: 119.99,
+        notes: "ClawMate Auto Groomers for grooming stations"
+    },
+    {
+        orderDetailId: 7,
+        orderId: 4,
+        productId: 1,
+        quantity: 10,
+        unitPrice: 129.99,
+        notes: "SmartFeeders bulk order"
+    },
+    {
+        orderDetailId: 8,
+        orderId: 4,
+        productId: 7,
+        quantity: 10,
+        unitPrice: 69.99,
+        notes: "Smart Fountain Flow+ units"
+    },
+    {
+        orderDetailId: 9,
+        orderId: 5,
+        productId: 8,
+        quantity: 8,
+        unitPrice: 59.99,
+        notes: "ScratchPad Pro units"
+    },
+    {
+        orderDetailId: 10,
+        orderId: 5,
+        productId: 9,
+        quantity: 8,
+        unitPrice: 99.99,
+        notes: "ChirpCam Window Mounts"
+    },
+    {
+        orderDetailId: 11,
+        orderId: 6,
+        productId: 10,
+        quantity: 15,
+        unitPrice: 49.99,
+        notes: "SnackVault Puzzle Dispensers"
+    },
+    {
+        orderDetailId: 12,
+        orderId: 6,
+        productId: 8,
+        quantity: 15,
+        unitPrice: 59.99,
+        notes: "ScratchPad Pro units"
+    },
+    {
+        orderDetailId: 13,
+        orderId: 6,
+        productId: 11,
+        quantity: 5,
+        unitPrice: 159.99,
+        notes: "DoorDash Pet Portals"
     }
 ];
 
