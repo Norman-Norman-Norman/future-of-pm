@@ -59,6 +59,41 @@ export default function Navigation() {
                         >
                           Manage Products
                         </Link>
+                        <Link
+                          to="/admin/orders"
+                          className={`block px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Manage Orders
+                        </Link>
+                        <Link
+                          to="/admin/branches"
+                          className={`block px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Manage Branches
+                        </Link>
+                        <Link
+                          to="/admin/headquarters"
+                          className={`block px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Manage Headquarters
+                        </Link>
+                        <Link
+                          to="/admin/suppliers"
+                          className={`block px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Manage Suppliers
+                        </Link>
+                        <Link
+                          to="/admin/deliveries"
+                          className={`block px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Manage Deliveries
+                        </Link>
                         {/* Space for other entity management links */}
                       </div>
                     </div>
