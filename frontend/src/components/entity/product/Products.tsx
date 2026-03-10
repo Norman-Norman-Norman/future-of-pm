@@ -22,6 +22,11 @@ const fetchProducts = async (): Promise<Product[]> => {
   return data;
 };
 
+const fetchFrequentlyBoughtTogether = async (productId: number): Promise<Product[]> => {
+  const { data } = await axios.get(`${api.baseURL}${api.endpoints.recommendations.frequentlyBoughtTogether(productId)}`);
+  return data;
+};
+
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,6 +34,11 @@ export default function Products() {
   const [showModal, setShowModal] = useState(false);
   const [showPromo, setShowPromo] = useState(true);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
+  const { data: frequentlyBoughtTogether } = useQuery(
+    ['frequentlyBoughtTogether', selectedProduct?.productId],
+    () => fetchFrequentlyBoughtTogether(selectedProduct!.productId),
+    { enabled: !!selectedProduct }
+  );
   const { darkMode } = useTheme();
   const { addToCart } = useCart();
 
@@ -228,6 +238,39 @@ export default function Products() {
             <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-lg transition-colors duration-300`}>
               {selectedProduct.description}
             </p>
+
+            {/* Frequently Bought Together */}
+            {frequentlyBoughtTogether && frequentlyBoughtTogether.length > 0 && (
+              <div className="mt-6">
+                <h3 className={`text-lg font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-3`}>
+                  Frequently Bought Together
+                </h3>
+                <div className="flex gap-3 overflow-x-auto pb-2">
+                  {frequentlyBoughtTogether.map(rec => (
+                    <div
+                      key={rec.productId}
+                      className={`flex-shrink-0 w-32 cursor-pointer rounded-lg overflow-hidden border ${darkMode ? 'border-gray-700 bg-gray-700 hover:border-primary' : 'border-gray-200 bg-gray-50 hover:border-primary'} transition-colors duration-200`}
+                      onClick={() => setSelectedProduct(rec)}
+                    >
+                      <img
+                        src={`/${rec.imgName}`}
+                        alt={rec.name}
+                        className="w-full h-24 object-contain p-2"
+                      />
+                      <div className="px-2 pb-2">
+                        <p className={`text-xs font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} truncate`}>{rec.name}</p>
+                        <p className="text-xs text-primary font-bold">${rec.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {frequentlyBoughtTogether && frequentlyBoughtTogether.length === 0 && (
+              <p className={`mt-4 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                No frequently bought together products yet.
+              </p>
+            )}
           </div>
         </div>
       )}
