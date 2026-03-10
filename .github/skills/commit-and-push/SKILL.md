@@ -329,9 +329,9 @@ Push the commit to the remote repository.
 **Action:**
 ```
 run_in_terminal with:
-  command: "git push origin HEAD"
-  explanation: "Pushing committed changes to the remote."
-  goal: "Push to remote"
+  command: "git push upstream HEAD"
+  explanation: "Pushing committed changes to the upstream remote."
+  goal: "Push to upstream"
   isBackground: false
   timeout: 30000
 ```
@@ -340,9 +340,9 @@ run_in_terminal with:
 - If push succeeds, proceed to Step 9.
 - If push fails with "no upstream branch," run:
   ```
-  git push --set-upstream origin <current-branch-name>
+  git push --set-upstream upstream <current-branch-name>
   ```
-- If push fails with "rejected (non-fast-forward)," inform the user: "The remote has changes not present locally. Pull and rebase first: `git pull --rebase origin <branch>`." Do NOT force push unless the user explicitly requests it.
+- If push fails with "rejected (non-fast-forward)," inform the user: "The remote has changes not present locally. Pull and rebase first: `git pull --rebase upstream <branch>`." Do NOT force push unless the user explicitly requests it.
 - If push fails with authentication errors, inform the user to check their git credentials.
 
 ---

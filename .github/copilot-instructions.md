@@ -44,8 +44,10 @@ npm run lint                   # Lint frontend (ESLint flat config)
 
 ## GitHub Workflow
 
+- **Upstream repo**: `Norman-Norman-Norman/future-of-pm` (`https://github.com/Norman-Norman-Norman/future-of-pm.git`)
+- **Commits & pushes**: Always push to `upstream` (not `origin`). Use `git push upstream HEAD`
 - **Issues**: Create on the upstream repo: `Norman-Norman-Norman/future-of-pm`
-- **Pull requests**: Create on origin: `MSFT-DEMOS/GitHubCopilot_Customized_TechConnect`
-- Use the `commit-and-push` skill for conventional commits
+- **Pull requests**: Create on the upstream repo: `Norman-Norman-Norman/future-of-pm`
+- Use the `commit-and-push` skill for conventional commits (push target: `upstream`)
 - Use the `create-pull-request` skill for comprehensive PRs
 - Use the `create-github-issue` skill for structured issue creation
