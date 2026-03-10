@@ -9,11 +9,45 @@
  * @swagger
  * /api/products:
  *   get:
- *     summary: Returns all products
+ *     summary: Returns all products, with optional filtering and sorting
  *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *           enum: [health, entertainment, smart-home, feeding, grooming, accessories]
+ *         description: Filter by product category
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price filter
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price filter
+ *       - in: query
+ *         name: hasDiscount
+ *         schema:
+ *           type: boolean
+ *         description: Filter to only discounted products
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [price, name]
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort order (asc or desc)
  *     responses:
  *       200:
- *         description: List of all products
+ *         description: List of products
  *         content:
  *           application/json:
  *             schema:
@@ -100,12 +134,16 @@
  */
 
 import express from 'express';
-import { Product } from '../models/product';
+import { Product, ProductCategory } from '../models/product';
 import { products as seedProducts } from '../seedData';
 
 const router = express.Router();
 
 let products: Product[] = [...seedProducts];
+
+export const resetProducts = () => {
+  products = [...seedProducts];
+};
 
 // Create a new product
 router.post('/', (req, res) => {
@@ -114,9 +152,44 @@ router.post('/', (req, res) => {
   res.status(201).json(newProduct);
 });
 
-// Get all products
+// Get all products with optional filtering and sorting
 router.get('/', (req, res) => {
-  res.json(products);
+  const { category, minPrice, maxPrice, hasDiscount, sortBy, sortOrder } = req.query;
+
+  let result = [...products];
+
+  if (category) {
+    result = result.filter(p => p.category === (category as ProductCategory));
+  }
+
+  if (minPrice !== undefined) {
+    const min = parseFloat(minPrice as string);
+    if (!isNaN(min)) {
+      result = result.filter(p => p.price >= min);
+    }
+  }
+
+  if (maxPrice !== undefined) {
+    const max = parseFloat(maxPrice as string);
+    if (!isNaN(max)) {
+      result = result.filter(p => p.price <= max);
+    }
+  }
+
+  if (hasDiscount === 'true') {
+    result = result.filter(p => p.discount !== undefined && p.discount > 0);
+  }
+
+  if (sortBy === 'price') {
+    result.sort((a, b) => sortOrder === 'desc' ? b.price - a.price : a.price - b.price);
+  } else if (sortBy === 'name') {
+    result.sort((a, b) => {
+      const cmp = a.name.localeCompare(b.name);
+      return sortOrder === 'desc' ? -cmp : cmp;
+    });
+  }
+
+  res.json(result);
 });
 
 // Get a product by ID
