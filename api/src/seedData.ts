@@ -6,6 +6,7 @@ import { Order } from './models/order';
 import { OrderDetail } from './models/orderDetail';
 import { Delivery } from './models/delivery';
 import { OrderDetailDelivery } from './models/orderDetailDelivery';
+import { ApprovalRule } from './models/approvalRule';
 
 // Suppliers
 export const suppliers: Supplier[] = [
@@ -300,5 +301,20 @@ export const orderDetailDeliveries: OrderDetailDelivery[] = [
         deliveryId: 2,
         quantity: 20,
         notes: "Delivery"
+    }
+];
+
+// Approval Rules
+export const approvalRules: ApprovalRule[] = [
+    {
+        ruleId: 1,
+        minAmount: 500,
+        requiredRole: "admin"
+    },
+    {
+        ruleId: 2,
+        minAmount: 1000,
+        requiredRole: "admin",
+        branchId: 1
     }
 ];

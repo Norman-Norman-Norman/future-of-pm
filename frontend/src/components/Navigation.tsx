@@ -1,12 +1,30 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { api } from '../api/config';
 
 export default function Navigation() {
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
+  const [pendingApprovalCount, setPendingApprovalCount] = useState(0);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const fetchPendingCount = async () => {
+      try {
+        const response = await axios.get(`${api.baseURL}${api.endpoints.ordersPendingApproval}`);
+        setPendingApprovalCount(response.data.length);
+      } catch {
+        setPendingApprovalCount(0);
+      }
+    };
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 30000);
+    return () => clearInterval(interval);
+  }, [isAdmin]);
 
   return (
     <nav className={`${darkMode ? 'bg-dark/95' : 'bg-white/95'} backdrop-blur-sm fixed w-full z-50 shadow-md transition-colors duration-300`}>
@@ -58,6 +76,18 @@ export default function Navigation() {
                           onClick={() => setAdminMenuOpen(false)}
                         >
                           Manage Products
+                        </Link>
+                        <Link
+                          to="/approvals"
+                          className={`flex items-center justify-between px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Approval Queue
+                          {pendingApprovalCount > 0 && (
+                            <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white">
+                              {pendingApprovalCount}
+                            </span>
+                          )}
                         </Link>
                         {/* Space for other entity management links */}
                       </div>

@@ -22,11 +22,20 @@
  *         status:
  *           type: string
  *           description: The current status of the order
- *           enum: [pending, processing, shipped, delivered, cancelled]
+ *           enum: [pending, pending-approval, approved, processing, shipped, delivered, cancelled, rejected]
  *         totalAmount:
  *           type: number
  *           format: float
  *           description: The total amount of the order
+ *         approvedBy:
+ *           type: string
+ *           description: Name of the user who approved the order
+ *         rejectedBy:
+ *           type: string
+ *           description: Name of the user who rejected the order
+ *         rejectionReason:
+ *           type: string
+ *           description: Reason provided when an order is rejected
  */
 export interface Order {
     orderId: number;
@@ -35,4 +44,8 @@ export interface Order {
     name: string;
     description: string;
     status: string;
+    totalAmount?: number;
+    approvedBy?: string;
+    rejectedBy?: string;
+    rejectionReason?: string;
 }
