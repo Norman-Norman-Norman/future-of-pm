@@ -4,6 +4,7 @@ import Welcome from './components/Welcome';
 import About from './components/About';
 import Footer from './components/Footer';
 import Products from './components/entity/product/Products';
+import Deliveries from './components/entity/delivery/Deliveries';
 import Login from './components/Login';
 import LandingPage from './components/LandingPage';
 import { AuthProvider } from './context/AuthContext';
@@ -27,6 +28,7 @@ function ThemedApp() {
             <Route path="/" element={<Welcome />} />
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/deliveries" element={<Deliveries />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
