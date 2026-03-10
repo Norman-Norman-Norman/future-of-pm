@@ -4,6 +4,7 @@ import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+import FavoriteButton from '../../FavoriteButton';
 
 interface Product {
   productId: number;
@@ -133,6 +134,9 @@ export default function Products() {
                       {Math.round(product.discount * 100)}% OFF
                     </div>
                   )}
+                  <div className="absolute top-2 right-2">
+                    <FavoriteButton productId={product.productId} productName={product.name} />
+                  </div>
                 </div>
                 
                 <div className="p-4 flex flex-col flex-grow">
