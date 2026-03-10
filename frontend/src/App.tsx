@@ -12,6 +12,10 @@ import { CartProvider } from './context/CartContext';
 import AdminProducts from './components/admin/AdminProducts';
 import Cart from './components/entity/cart/Cart';
 import Checkout from './components/entity/cart/Checkout';
+import Orders from './components/entity/order/Orders';
+import Deliveries from './components/entity/delivery/Deliveries';
+import Suppliers from './components/entity/supplier/Suppliers';
+import Reports from './components/entity/reports/Reports';
 import { useTheme } from './context/ThemeContext';
 
 // Wrapper component to apply theme classes
@@ -27,6 +31,10 @@ function ThemedApp() {
             <Route path="/" element={<Welcome />} />
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/deliveries" element={<Deliveries />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
