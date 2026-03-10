@@ -6,6 +6,7 @@ import { Order } from './models/order';
 import { OrderDetail } from './models/orderDetail';
 import { Delivery } from './models/delivery';
 import { OrderDetailDelivery } from './models/orderDetailDelivery';
+import { ProductBundle } from './models/productBundle';
 
 // Suppliers
 export const suppliers: Supplier[] = [
@@ -300,5 +301,31 @@ export const orderDetailDeliveries: OrderDetailDelivery[] = [
         deliveryId: 2,
         quantity: 20,
         notes: "Delivery"
+    }
+];
+
+// Product Bundles
+export const productBundles: ProductBundle[] = [
+    {
+        bundleId: 1,
+        name: "Smart Home Starter Kit",
+        description: "Everything you need to get your smart cat home up and running. Combines the AI-powered SmartFeeder One, the adaptive Smart Fountain Flow+, and the temperature-controlled SleepNest ThermoPod for a complete connected cat lifestyle.",
+        products: [
+            { productId: 1, quantity: 1 },
+            { productId: 7, quantity: 1 },
+            { productId: 5, quantity: 1 }
+        ],
+        discountPercentage: 15
+    },
+    {
+        bundleId: 2,
+        name: "Feline Entertainment Pack",
+        description: "Keep your cat entertained around the clock with this curated entertainment bundle. Includes the CatFlix Entertainment Portal, the ChirpCam Window Mount for outdoor views, and the gamified ScratchPad Pro.",
+        products: [
+            { productId: 3, quantity: 1 },
+            { productId: 9, quantity: 1 },
+            { productId: 8, quantity: 1 }
+        ],
+        discountPercentage: 10
     }
 ];

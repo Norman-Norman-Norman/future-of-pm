@@ -4,12 +4,14 @@ import Welcome from './components/Welcome';
 import About from './components/About';
 import Footer from './components/Footer';
 import Products from './components/entity/product/Products';
+import Bundles from './components/entity/bundle/Bundles';
 import Login from './components/Login';
 import LandingPage from './components/LandingPage';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
 import AdminProducts from './components/admin/AdminProducts';
+import AdminBundles from './components/admin/AdminBundles';
 import Cart from './components/entity/cart/Cart';
 import Checkout from './components/entity/cart/Checkout';
 import { useTheme } from './context/ThemeContext';
@@ -27,10 +29,12 @@ function ThemedApp() {
             <Route path="/" element={<Welcome />} />
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/bundles" element={<Bundles />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/bundles" element={<AdminBundles />} />
             <Route path="/launch" element={<LandingPage />} />
           </Routes>
         </main>

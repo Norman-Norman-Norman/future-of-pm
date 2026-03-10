@@ -29,6 +29,7 @@ export default function Navigation() {
             <div className="ml-10 flex items-baseline space-x-4">
               <Link to="/" className={`${darkMode ? 'text-light hover:text-primary' : 'text-gray-700 hover:text-primary'} px-3 py-2 rounded-md text-sm font-medium transition-colors`}>Home</Link>
               <Link to="/products" className={`${darkMode ? 'text-light hover:text-primary' : 'text-gray-700 hover:text-primary'} px-3 py-2 rounded-md text-sm font-medium transition-colors`}>Products</Link>
+              <Link to="/bundles" className={`${darkMode ? 'text-light hover:text-primary' : 'text-gray-700 hover:text-primary'} px-3 py-2 rounded-md text-sm font-medium transition-colors`}>Bundles</Link>
               <Link to="/about" className={`${darkMode ? 'text-light hover:text-primary' : 'text-gray-700 hover:text-primary'} px-3 py-2 rounded-md text-sm font-medium transition-colors`}>About us</Link>
               {isAdmin && (
                 <div className="relative">
@@ -58,6 +59,13 @@ export default function Navigation() {
                           onClick={() => setAdminMenuOpen(false)}
                         >
                           Manage Products
+                        </Link>
+                        <Link
+                          to="/admin/bundles"
+                          className={`block px-4 py-2 text-sm ${darkMode ? 'text-light hover:bg-primary hover:text-white' : 'text-gray-700 hover:bg-primary hover:text-white'} transition-colors`}
+                          onClick={() => setAdminMenuOpen(false)}
+                        >
+                          Manage Bundles
                         </Link>
                         {/* Space for other entity management links */}
                       </div>
