@@ -50,6 +50,8 @@ export const api = {
         headquarters: '/api/headquarters',
         deliveries: '/api/deliveries',
         orderDetails: '/api/order-details',
-        orderDetailDeliveries: '/api/order-detail-deliveries'
+        orderDetailDeliveries: '/api/order-detail-deliveries',
+        orderStatus: (id: number) => `/api/orders/${id}/status`,
+        orderHistory: (id: number) => `/api/orders/${id}/history`,
     }
 };
