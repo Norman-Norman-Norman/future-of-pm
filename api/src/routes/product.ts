@@ -37,6 +37,20 @@
  *             schema:
  *               $ref: '#/components/schemas/Product'
  * 
+ * /api/products/low-stock:
+ *   get:
+ *     summary: Returns products at or below their reorder point
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: List of low-stock products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *
  * /api/products/{id}:
  *   get:
  *     summary: Get a product by ID
@@ -97,6 +111,41 @@
  *         description: Product deleted successfully
  *       404:
  *         description: Product not found
+ *
+ * /api/products/{id}/stock:
+ *   put:
+ *     summary: Adjust the stock level of a product
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Product ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - adjustment
+ *             properties:
+ *               adjustment:
+ *                 type: integer
+ *                 description: Amount to add (positive) or subtract (negative) from stock level
+ *     responses:
+ *       200:
+ *         description: Stock level updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Invalid adjustment or stock would go negative
+ *       404:
+ *         description: Product not found
  */
 
 import express from 'express';
@@ -106,6 +155,14 @@ import { products as seedProducts } from '../seedData';
 const router = express.Router();
 
 let products: Product[] = [...seedProducts];
+
+export const resetProducts = () => { products = [...seedProducts]; };
+
+// Get low-stock products (must be defined before /:id to avoid route conflict)
+router.get('/low-stock', (req, res) => {
+  const lowStock = products.filter(p => p.stockLevel <= p.reorderPoint);
+  res.json(lowStock);
+});
 
 // Create a new product
 router.post('/', (req, res) => {
@@ -137,6 +194,27 @@ router.put('/:id', (req, res) => {
     res.json(products[index]);
   } else {
     res.status(404).send('Product not found');
+  }
+});
+
+// Adjust stock level
+router.put('/:id/stock', (req, res) => {
+  const index = products.findIndex(p => p.productId === parseInt(req.params.id));
+  if (index === -1) {
+    res.status(404).send('Product not found');
+  } else {
+    const { adjustment } = req.body;
+    if (typeof adjustment !== 'number') {
+      res.status(400).send('adjustment must be a number');
+    } else {
+      const newLevel = products[index].stockLevel + adjustment;
+      if (newLevel < 0) {
+        res.status(400).send('Stock level cannot go below zero');
+      } else {
+        products[index] = { ...products[index], stockLevel: newLevel };
+        res.json(products[index]);
+      }
+    }
   }
 });
 
