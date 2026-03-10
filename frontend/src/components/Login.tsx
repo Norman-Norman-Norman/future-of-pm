@@ -35,10 +35,9 @@ export default function Login() {
         <h2 className={`text-3xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-6 transition-colors duration-300`}>Login</h2>
         
         {error && (
-          <div 
-            className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4"
-            dangerouslySetInnerHTML={{ __html: error }}
-          />
+          <p className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4">
+            {error}
+          </p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
