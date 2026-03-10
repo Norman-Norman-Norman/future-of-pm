@@ -23,14 +23,10 @@
  *           type: string
  *           description: The current status of the order
  *           enum: [pending, processing, shipped, delivered, cancelled]
- *         totalAmount:
- *           type: number
- *           format: float
- *           description: The total amount of the order
  *         orderTotal:
  *           type: number
  *           format: float
- *           description: The calculated total for the order
+ *           description: The total amount for the order
  *         shippingAddress:
  *           type: string
  *           description: The delivery address for the order

@@ -220,8 +220,7 @@ export const orders: Order[] = [
         description: "Quarterly smart cat tech product refresh",
         status: "pending",
         orderTotal: 1449.90,
-        shippingAddress: "456 Purrfect Plaza, Meowtown",
-        trackingNumber: undefined
+        shippingAddress: "456 Purrfect Plaza, Meowtown"
     },
     {
         orderId: 2,
@@ -231,8 +230,7 @@ export const orders: Order[] = [
         description: "Monthly cat entertainment systems restock",
         status: "processing",
         orderTotal: 1599.80,
-        shippingAddress: "789 Feline Avenue, Tabby Terrace",
-        trackingNumber: undefined
+        shippingAddress: "789 Feline Avenue, Tabby Terrace"
     },
     {
         orderId: 3,
@@ -264,8 +262,7 @@ export const orders: Order[] = [
         description: "ChirpCam window mounts for branch surveillance",
         status: "cancelled",
         orderTotal: 299.97,
-        shippingAddress: "456 Purrfect Plaza, Meowtown",
-        trackingNumber: undefined
+        shippingAddress: "456 Purrfect Plaza, Meowtown"
     }
 ];
 
