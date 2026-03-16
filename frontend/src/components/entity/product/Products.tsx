@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
@@ -25,12 +26,11 @@ const fetchProducts = async (): Promise<Product[]> => {
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showModal, setShowModal] = useState(false);
   const [showPromo, setShowPromo] = useState(true);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const filteredProducts = products?.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,8 +62,7 @@ export default function Products() {
   };
 
   const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
-    setShowModal(true);
+    navigate(`/products/${product.productId}`);
   };
 
   if (isLoading) {
@@ -197,40 +196,6 @@ export default function Products() {
           </div>
         </div>
       </div>
-
-      {/* Product Modal */}
-      {showModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowModal(false)}>
-          <div 
-            className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl transition-colors duration-300`}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex justify-end">
-              <button 
-                onClick={() => setShowModal(false)}
-                className={`${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-300`}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className={`${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} rounded-lg mb-6 p-4`}>
-              <img 
-                src={`/${selectedProduct.imgName}`} 
-                alt={selectedProduct.name}
-                className="w-full h-auto object-contain max-h-[400px]"
-              />
-            </div>
-            <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
-              {selectedProduct.name}
-            </h2>
-            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-lg transition-colors duration-300`}>
-              {selectedProduct.description}
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Promo Popup - Chef's Hat Sale */}
       {showPromo && (

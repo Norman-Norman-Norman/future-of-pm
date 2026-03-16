@@ -32,6 +32,23 @@
  *           type: number
  *           format: float
  *           description: Discount percentage (if applicable) expressed as a decimal (e.g., 0.25 for 25%)
+ *         images:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Array of image URLs for the product gallery
+ *         averageRating:
+ *           type: number
+ *           format: float
+ *           description: Average customer rating (1-5)
+ *         reviewCount:
+ *           type: integer
+ *           description: Total number of customer reviews
+ *         specifications:
+ *           type: object
+ *           additionalProperties:
+ *             type: string
+ *           description: Key-value product specifications
  */
 export interface Product {
     productId: number;
@@ -43,4 +60,8 @@ export interface Product {
     unit: string;
     imgName: string;
     discount?: number;
+    images?: string[];
+    averageRating?: number;
+    reviewCount?: number;
+    specifications?: Record<string, string>;
 }

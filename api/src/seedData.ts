@@ -1,5 +1,6 @@
 import { Supplier } from './models/supplier';
 import { Product } from './models/product';
+import { Review } from './models/review';
 import { Headquarters } from './models/headquarters';
 import { Branch } from './models/branch';
 import { Order } from './models/order';
@@ -45,7 +46,16 @@ export const products: Product[] = [
         price: 72.99,
         sku: "GHCP-HAT-001",
         unit: "piece",
-        imgName: "GHCP_ChefsHat.png"
+        imgName: "GHCP_ChefsHat.png",
+        images: ["GHCP_ChefsHat.png"],
+        averageRating: 4.7,
+        reviewCount: 12,
+        specifications: {
+            "Material": "Breathable cotton-blend",
+            "Size": "One size fits most",
+            "Care": "Machine washable",
+            "Logo": "Embroidered GitHub Copilot"
+        }
     },
     {
         productId: 1,
@@ -56,7 +66,17 @@ export const products: Product[] = [
         sku: "CAT-FEED-001",
         unit: "piece",
         imgName: "feeder.png",
-        discount: 0.25
+        discount: 0.25,
+        images: ["feeder.png"],
+        averageRating: 4.5,
+        reviewCount: 34,
+        specifications: {
+            "Capacity": "4 lbs dry food",
+            "Power": "AC adapter + battery backup",
+            "Connectivity": "Wi-Fi 2.4GHz",
+            "App": "iOS & Android",
+            "Dimensions": "10\" x 10\" x 16\""
+        }
     },
     {
         productId: 2,
@@ -67,7 +87,17 @@ export const products: Product[] = [
         sku: "CAT-LITTER-001",
         unit: "piece",
         imgName: "litter-box.png",
-        discount: 0.25
+        discount: 0.25,
+        images: ["litter-box.png"],
+        averageRating: 4.2,
+        reviewCount: 58,
+        specifications: {
+            "Capacity": "Up to 15 lbs litter",
+            "Cycle Time": "20 minutes after use",
+            "Power": "AC adapter required",
+            "Waste Drawer": "Removable, odor-sealed",
+            "Dimensions": "22\" x 22\" x 26\""
+        }
     },
     {
         productId: 3,
@@ -77,7 +107,17 @@ export const products: Product[] = [
         price: 89.99,
         sku: "CAT-FLIX-001",
         unit: "piece",
-        imgName: "catflix.png"
+        imgName: "catflix.png",
+        images: ["catflix.png"],
+        averageRating: 4.8,
+        reviewCount: 21,
+        specifications: {
+            "Display": "7\" HD touchscreen",
+            "Content": "500+ hours of feline programming",
+            "Connectivity": "Wi-Fi + Bluetooth",
+            "Laser": "Class 1 safe laser module",
+            "Power": "USB-C"
+        }
     },
     {
         productId: 4,
@@ -87,7 +127,17 @@ export const products: Product[] = [
         price: 79.99,
         sku: "CAT-COLLAR-001",
         unit: "piece",
-        imgName: "smart-collar.png"
+        imgName: "smart-collar.png",
+        images: ["smart-collar.png"],
+        averageRating: 4.3,
+        reviewCount: 47,
+        specifications: {
+            "GPS Accuracy": "±3 meters",
+            "Battery Life": "7 days",
+            "Water Resistance": "IPX7",
+            "Weight": "18g",
+            "Sizes": "XS, S, M"
+        }
     },
     {
         productId: 5,
@@ -97,7 +147,17 @@ export const products: Product[] = [
         price: 149.99,
         sku: "CAT-BED-001",
         unit: "piece",
-        imgName: "sleep-nest.png"
+        imgName: "sleep-nest.png",
+        images: ["sleep-nest.png"],
+        averageRating: 4.6,
+        reviewCount: 29,
+        specifications: {
+            "Temperature Range": "68°F – 104°F",
+            "Lighting": "Adjustable warm LED",
+            "Sound": "10 white noise modes",
+            "Material": "Orthopedic memory foam",
+            "Dimensions": "24\" x 20\" x 8\""
+        }
     },
     {
         productId: 6,
@@ -107,7 +167,17 @@ export const products: Product[] = [
         price: 119.99,
         sku: "CAT-GROOM-001",
         unit: "piece",
-        imgName: "auto-groomer.png"
+        imgName: "auto-groomer.png",
+        images: ["auto-groomer.png"],
+        averageRating: 4.1,
+        reviewCount: 16,
+        specifications: {
+            "Brush Type": "Rotating soft-bristle",
+            "Treat Capacity": "50 treats",
+            "Power": "USB-C rechargeable",
+            "Noise Level": "<40 dB",
+            "Weight": "1.2 lbs"
+        }
     },
     {
         productId: 7,
@@ -118,7 +188,17 @@ export const products: Product[] = [
         sku: "CAT-FOUNTAIN-001",
         unit: "piece",
         imgName: "smart-fountain.png",
-        discount: 0.25
+        discount: 0.25,
+        images: ["smart-fountain.png"],
+        averageRating: 4.4,
+        reviewCount: 63,
+        specifications: {
+            "Capacity": "2.5 liters",
+            "Filter": "Triple-stage charcoal",
+            "Noise Level": "<25 dB",
+            "Power": "5V DC adapter",
+            "Material": "BPA-free plastic"
+        }
     },
     {
         productId: 8,
@@ -128,7 +208,17 @@ export const products: Product[] = [
         price: 59.99,
         sku: "CAT-SCRATCH-001",
         unit: "piece",
-        imgName: "scratch-pad.png"
+        imgName: "scratch-pad.png",
+        images: ["scratch-pad.png"],
+        averageRating: 4.0,
+        reviewCount: 38,
+        specifications: {
+            "Surface": "Sisal rope + cardboard combo",
+            "Display": "2\" LCD leaderboard screen",
+            "Sensors": "Pressure + capacitive touch",
+            "Power": "3x AA batteries",
+            "Dimensions": "18\" x 12\" x 24\""
+        }
     },
     {
         productId: 9,
@@ -138,7 +228,17 @@ export const products: Product[] = [
         price: 99.99,
         sku: "CAT-CAM-001",
         unit: "piece",
-        imgName: "chirp-cam.png"
+        imgName: "chirp-cam.png",
+        images: ["chirp-cam.png"],
+        averageRating: 4.5,
+        reviewCount: 19,
+        specifications: {
+            "Resolution": "1080p HD",
+            "Field of View": "120°",
+            "Night Vision": "IR up to 10ft",
+            "Storage": "32GB SD card included",
+            "Mounting": "Suction cup + adhesive"
+        }
     },
     {
         productId: 10,
@@ -149,7 +249,17 @@ export const products: Product[] = [
         sku: "CAT-SNACK-001",
         unit: "piece",
         imgName: "snack-vault.png",
-        discount: 0.25
+        discount: 0.25,
+        images: ["snack-vault.png"],
+        averageRating: 4.7,
+        reviewCount: 52,
+        specifications: {
+            "Difficulty Levels": "5 (auto-adjusting)",
+            "Treat Capacity": "1 cup",
+            "Material": "Food-safe ABS plastic",
+            "Power": "2x AAA batteries",
+            "Dimensions": "12\" x 12\" x 4\""
+        }
     },
     {
         productId: 11,
@@ -159,7 +269,17 @@ export const products: Product[] = [
         price: 159.99,
         sku: "CAT-DOOR-001",
         unit: "piece",
-        imgName: "door-dash.png"
+        imgName: "door-dash.png",
+        images: ["door-dash.png"],
+        averageRating: 4.3,
+        reviewCount: 27,
+        specifications: {
+            "Opening Size": "6.3\" x 7.1\"",
+            "Recognition": "Up to 10 pet profiles",
+            "Power": "4x AA batteries",
+            "Insulation": "Dual-flap magnetic seal",
+            "Installation": "Fits doors 0.4\"–1.4\" thick"
+        }
     },
     {
         productId: 12,
@@ -169,7 +289,17 @@ export const products: Product[] = [
         price: 79.99,
         sku: "CAT-TRACKER-001",
         unit: "piece",
-        imgName: "tracker-mat.png"
+        imgName: "tracker-mat.png",
+        images: ["tracker-mat.png"],
+        averageRating: 4.6,
+        reviewCount: 41,
+        specifications: {
+            "Sensors": "Pressure + IR motion grid",
+            "Surface": "Non-slip rubberized fabric",
+            "Lights": "RGB LED chase strip",
+            "Power": "USB-C",
+            "Dimensions": "36\" x 24\""
+        }
     }
 ];
 
@@ -300,5 +430,216 @@ export const orderDetailDeliveries: OrderDetailDelivery[] = [
         deliveryId: 2,
         quantity: 20,
         notes: "Delivery"
+    }
+];
+
+// Reviews
+export const reviews: Review[] = [
+    // SmartFeeder One (productId: 1)
+    {
+        reviewId: 1,
+        productId: 1,
+        rating: 5,
+        title: "My cat controls meal times now",
+        body: "Set it up in under 10 minutes and our tabby Biscuit figured out the schedule within a day. The health reports are genuinely useful — caught a dip in appetite before we even noticed.",
+        authorName: "Marcus T.",
+        createdAt: "2026-02-15T10:22:00.000Z",
+        helpful: 14
+    },
+    {
+        reviewId: 2,
+        productId: 1,
+        rating: 4,
+        title: "Great feeder, app could be better",
+        body: "The hardware is solid and the AI schedule is surprisingly accurate. The companion app crashes occasionally on Android but the web dashboard works perfectly.",
+        authorName: "Priya S.",
+        createdAt: "2026-01-28T14:05:00.000Z",
+        helpful: 9
+    },
+    {
+        reviewId: 3,
+        productId: 1,
+        rating: 4,
+        title: "Worth every penny for multi-cat homes",
+        body: "We have three cats with different dietary needs. This feeder handles all three profiles without confusion. Setup takes a bit of patience but the result is fantastic.",
+        authorName: "Elena R.",
+        createdAt: "2026-01-10T08:47:00.000Z",
+        helpful: 22
+    },
+    // AutoClean Litter Dome (productId: 2)
+    {
+        reviewId: 4,
+        productId: 2,
+        rating: 5,
+        title: "Never scooping again",
+        body: "After three months, I cannot imagine going back to manual scooping. The Slack health alerts saved us a vet visit when it flagged unusual patterns early.",
+        authorName: "David K.",
+        createdAt: "2026-02-20T09:15:00.000Z",
+        helpful: 31
+    },
+    {
+        reviewId: 5,
+        productId: 2,
+        rating: 4,
+        title: "Noisy but worth it",
+        body: "The cleaning cycle is louder than I expected — about 55 dB. Our cat was spooked for the first week but now ignores it completely. Health reporting is excellent.",
+        authorName: "Carmen D.",
+        createdAt: "2026-02-01T16:30:00.000Z",
+        helpful: 18
+    },
+    {
+        reviewId: 6,
+        productId: 2,
+        rating: 3,
+        title: "Good concept, occasional jams",
+        body: "Works great 90% of the time. Occasionally gets jammed with clumping litter and requires manual intervention. Support team was responsive and helpful.",
+        authorName: "Gary P.",
+        createdAt: "2026-01-05T11:20:00.000Z",
+        helpful: 12
+    },
+    // CatFlix Entertainment Portal (productId: 3)
+    {
+        reviewId: 7,
+        productId: 3,
+        rating: 5,
+        title: "My cat is obsessed",
+        body: "Luna watches the bird streams for hours. The AI figured out she prefers finches over robins in less than a week. The laser show at 3pm keeps her from knocking things off my desk.",
+        authorName: "Yuki N.",
+        createdAt: "2026-02-18T13:40:00.000Z",
+        helpful: 27
+    },
+    {
+        reviewId: 8,
+        productId: 3,
+        rating: 5,
+        title: "Best cat enrichment device ever made",
+        body: "I was skeptical but this genuinely reduced our cat's anxiety-driven behavior. Vet confirmed he's calmer and more active. Worth every cent.",
+        authorName: "Sophie W.",
+        createdAt: "2026-01-22T10:05:00.000Z",
+        helpful: 19
+    },
+    {
+        reviewId: 9,
+        productId: 3,
+        rating: 4,
+        title: "Impressive tech, small screen",
+        body: "The content library is remarkable and the personalization is spot-on. Only gripe is the 7\" screen — wish it was larger for multi-cat viewing.",
+        authorName: "Kenji T.",
+        createdAt: "2025-12-30T15:55:00.000Z",
+        helpful: 8
+    },
+    // PawTrack Smart Collar (productId: 4)
+    {
+        reviewId: 10,
+        productId: 4,
+        rating: 5,
+        title: "Found my cat in 3 minutes",
+        body: "Our cat escaped through a torn screen. Had GPS coordinates on my phone within 60 seconds. Found her 200 yards away hiding under a deck. This collar paid for itself that day.",
+        authorName: "Aisha J.",
+        createdAt: "2026-02-12T08:30:00.000Z",
+        helpful: 45
+    },
+    {
+        reviewId: 11,
+        productId: 4,
+        rating: 4,
+        title: "Accurate tracking, slight bulk",
+        body: "GPS is impressively accurate — within a few meters consistently. The collar is slightly heavier than our cat's previous one but she adjusted within a few days.",
+        authorName: "Tom W.",
+        createdAt: "2026-01-18T14:22:00.000Z",
+        helpful: 11
+    },
+    {
+        reviewId: 12,
+        productId: 4,
+        rating: 4,
+        title: "Mood detection is surprisingly good",
+        body: "I was most curious about the mood detection and it's genuinely accurate. It flagged 'stressed' before thunderstorms before we noticed any behavioral change ourselves.",
+        authorName: "Nina C.",
+        createdAt: "2025-12-15T09:10:00.000Z",
+        helpful: 16
+    },
+    // SleepNest ThermoPod (productId: 5)
+    {
+        reviewId: 13,
+        productId: 5,
+        rating: 5,
+        title: "Cat won't sleep anywhere else now",
+        body: "Within 48 hours of setup, our senior cat chose the ThermoPod over every other sleeping spot in the house. Her arthritis flare-ups have noticeably decreased.",
+        authorName: "Helen M.",
+        createdAt: "2026-02-08T11:00:00.000Z",
+        helpful: 23
+    },
+    {
+        reviewId: 14,
+        productId: 5,
+        rating: 4,
+        title: "Nap metrics are surprisingly informative",
+        body: "I bought this expecting a gimmick. The REM cycle data is legitimately useful — our vet used the sleep data to adjust our cat's medication timing.",
+        authorName: "Dr. Osei",
+        createdAt: "2026-01-25T16:45:00.000Z",
+        helpful: 30
+    },
+    // Smart Fountain Flow+ (productId: 7)
+    {
+        reviewId: 15,
+        productId: 7,
+        rating: 5,
+        title: "Solved our cat's chronic dehydration",
+        body: "Our vet recommended increasing water intake. Since switching to this fountain, kidney enzyme levels are back to normal at the last checkup. The flow adjustment throughout the day is clever.",
+        authorName: "Lisa O.",
+        createdAt: "2026-02-25T10:30:00.000Z",
+        helpful: 38
+    },
+    {
+        reviewId: 16,
+        productId: 7,
+        rating: 4,
+        title: "Ultra quiet and multi-cat friendly",
+        body: "Handles our four cats without any territorial disputes over the fountain. The facial recognition to log individual drinking amounts is a nice touch for a multi-cat home.",
+        authorName: "Elena R.",
+        createdAt: "2026-01-30T13:15:00.000Z",
+        helpful: 21
+    },
+    {
+        reviewId: 17,
+        productId: 7,
+        rating: 4,
+        title: "Filter lasts longer than advertised",
+        body: "Three months in and still on the first filter with crystal-clear water. Great value at this price point, especially with the discount.",
+        authorName: "Brenda L.",
+        createdAt: "2026-01-12T09:05:00.000Z",
+        helpful: 14
+    },
+    // SnackVault Puzzle Dispenser (productId: 10)
+    {
+        reviewId: 18,
+        productId: 10,
+        rating: 5,
+        title: "My genius cat met his match",
+        body: "Our Bengal has outsmarted every puzzle toy we've bought. This one keeps adjusting the difficulty and he's completely engaged. Three months later and he hasn't 'beaten' it yet.",
+        authorName: "Brian K.",
+        createdAt: "2026-02-22T14:20:00.000Z",
+        helpful: 29
+    },
+    {
+        reviewId: 19,
+        productId: 10,
+        rating: 5,
+        title: "Amazing for weight management",
+        body: "Vet recommended puzzle feeders to slow down our overweight cat. This one does it perfectly AND provides mental enrichment. Down 0.4 lbs in 6 weeks.",
+        authorName: "Carmen D.",
+        createdAt: "2026-02-05T11:40:00.000Z",
+        helpful: 17
+    },
+    {
+        reviewId: 20,
+        productId: 10,
+        rating: 4,
+        title: "Works as advertised, treat size matters",
+        body: "Works great with small treats but the pathways can get stuck with larger treats. Stick to kibble-sized treats and it's flawless.",
+        authorName: "Javier M.",
+        createdAt: "2026-01-20T08:55:00.000Z",
+        helpful: 12
     }
 ];
