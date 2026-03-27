@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+<<<<<<< HEAD
+=======
+import { frontendLogger } from '../../../logger';
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
 
 interface Product {
   productId: number;
@@ -18,7 +22,10 @@ interface Product {
 }
 
 const fetchProducts = async (): Promise<Product[]> => {
-  const { data } = await axios.get(`${api.baseURL}${api.endpoints.products}`);
+  const url = `${api.baseURL}${api.endpoints.products}`;
+  frontendLogger.apiRequest('GET', url);
+  const { data } = await axios.get(url);
+  frontendLogger.apiResponse('GET', url, 200, { count: data.length });
   return data;
 };
 
@@ -31,6 +38,23 @@ export default function Products() {
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
   const { addToCart } = useCart();
+<<<<<<< HEAD
+=======
+
+  useEffect(() => {
+    frontendLogger.componentMount('Products');
+    return () => frontendLogger.componentUnmount('Products');
+  }, []);
+
+  useEffect(() => {
+    if (products) {
+      frontendLogger.info('Products', `Products loaded: ${products.length} items`);
+    }
+    if (error) {
+      frontendLogger.error('Products', 'Failed to fetch products', error);
+    }
+  }, [products, error]);
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
 
   const filteredProducts = products?.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -38,9 +62,11 @@ export default function Products() {
   );
 
   const handleQuantityChange = (productId: number, change: number) => {
+    const newQty = Math.max(0, (quantities[productId] || 0) + change);
+    frontendLogger.userAction('Quantity change', { productId, change, newQty });
     setQuantities(prev => ({
       ...prev,
-      [productId]: Math.max(0, (prev[productId] || 0) + change)
+      [productId]: newQty
     }));
   };
 
@@ -50,6 +76,10 @@ export default function Products() {
       const effectivePrice = product.discount
         ? product.price * (1 - product.discount)
         : product.price;
+<<<<<<< HEAD
+=======
+      frontendLogger.userAction('Add to cart from Products page', { productId: product.productId, name: product.name, quantity, effectivePrice });
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
       addToCart(
         { productId: product.productId, name: product.name, price: effectivePrice, imgName: product.imgName },
         quantity
@@ -62,6 +92,7 @@ export default function Products() {
   };
 
   const handleProductClick = (product: Product) => {
+    frontendLogger.userAction('Product detail clicked', { productId: product.productId, name: product.name });
     setSelectedProduct(product);
     setShowModal(true);
   };

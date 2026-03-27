@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 import ProductForm from '../entity/product/ProductForm';
 import axios from 'axios';
 import { api } from '../../api/config';
+import { frontendLogger } from '../../logger';
 
 interface Supplier {
   supplierId: number;
@@ -42,40 +43,53 @@ export default function AdminProducts() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   useEffect(() => {
+    frontendLogger.componentMount('AdminProducts');
     fetchProducts();
     fetchSuppliers();
+    return () => frontendLogger.componentUnmount('AdminProducts');
   }, []);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${api.baseURL}${api.endpoints.products}`);
+      const url = `${api.baseURL}${api.endpoints.products}`;
+      frontendLogger.apiRequest('GET', url);
+      const response = await axios.get(url);
+      frontendLogger.apiResponse('GET', url, response.status, { count: response.data.length });
       const productsData = response.data;
       
       // Fetch supplier details for each product
+      frontendLogger.debug('AdminProducts', `Fetching supplier details for ${productsData.length} products`);
       const productsWithSuppliers = await Promise.all(
         productsData.map(async (product: Product) => {
           try {
-            const supplierResponse = await axios.get(`${api.baseURL}${api.endpoints.suppliers}/${product.supplierId}`);
+            const supplierUrl = `${api.baseURL}${api.endpoints.suppliers}/${product.supplierId}`;
+            frontendLogger.apiRequest('GET', supplierUrl);
+            const supplierResponse = await axios.get(supplierUrl);
+            frontendLogger.apiResponse('GET', supplierUrl, supplierResponse.status);
             return { ...product, supplier: supplierResponse.data };
           } catch (error) {
-            console.error(`Error fetching supplier for product ${product.productId}:`, error);
+            frontendLogger.error('AdminProducts', `Error fetching supplier for product ${product.productId}`, error);
             return product;
           }
         })
       );
       
+      frontendLogger.info('AdminProducts', `Loaded ${productsWithSuppliers.length} products with suppliers`);
       setProducts(productsWithSuppliers);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      frontendLogger.error('AdminProducts', 'Error fetching products', error);
     }
   };
 
   const fetchSuppliers = async () => {
     try {
-      const response = await axios.get(`${api.baseURL}${api.endpoints.suppliers}`);
+      const url = `${api.baseURL}${api.endpoints.suppliers}`;
+      frontendLogger.apiRequest('GET', url);
+      const response = await axios.get(url);
+      frontendLogger.apiResponse('GET', url, response.status, { count: response.data.length });
       setSuppliers(response.data);
     } catch (error) {
-      console.error('Error fetching suppliers:', error);
+      frontendLogger.error('AdminProducts', 'Error fetching suppliers', error);
     }
   };
 
@@ -198,10 +212,14 @@ export default function AdminProducts() {
                     onClick={async () => {
                       if (window.confirm('Are you sure you want to delete this product?')) {
                         try {
-                          await axios.delete(`${api.baseURL}${api.endpoints.products}/${product.productId}`);
+                          const url = `${api.baseURL}${api.endpoints.products}/${product.productId}`;
+                          frontendLogger.apiRequest('DELETE', url);
+                          frontendLogger.userAction('Delete product', { productId: product.productId, name: product.name });
+                          await axios.delete(url);
+                          frontendLogger.apiResponse('DELETE', url, 200);
                           await fetchProducts();
                         } catch (error) {
-                          console.error('Error deleting product:', error);
+                          frontendLogger.error('AdminProducts', 'Error deleting product', error);
                         }
                       }
                     }}

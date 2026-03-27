@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+=======
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
+import { frontendLogger } from '../../../logger';
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
 
 const DISCOUNT_RATE = 0.05;
 const SHIPPING_COST = 10;
@@ -9,6 +17,20 @@ export default function Checkout() {
   const { darkMode } = useTheme();
   const { items, clearCart } = useCart();
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    frontendLogger.componentMount('Checkout');
+    return () => frontendLogger.componentUnmount('Checkout');
+  }, []);
+
+  useEffect(() => {
+    frontendLogger.info('Checkout', `Checkout items: ${items.length}`, {
+      items: items.map(i => ({ name: i.name, qty: i.quantity, price: i.price }))
+    });
+  }, [items]);
+
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = subtotal * DISCOUNT_RATE;
   const shipping = items.length > 0 ? SHIPPING_COST : 0;
@@ -79,6 +101,14 @@ export default function Checkout() {
           </Link>
           <button
             onClick={() => {
+<<<<<<< HEAD
+=======
+              frontendLogger.userAction('Place order', {
+                itemCount: items.length,
+                grandTotal,
+                items: items.map(i => ({ name: i.name, qty: i.quantity }))
+              });
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
               clearCart();
               alert('Order placed successfully!');
             }}

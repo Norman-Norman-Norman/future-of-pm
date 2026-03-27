@@ -7,10 +7,14 @@ declare global {
     }
 }
 
+import { frontendLogger } from '../logger';
+
 const getBaseUrl = () => {
+    frontendLogger.debug('API_CONFIG', 'Resolving API base URL...');
+
     // First check runtime configuration (from runtime-config.js)
     if (typeof window !== 'undefined' && window.RUNTIME_CONFIG?.API_URL) {
-        console.log('Using runtime config API_URL:', window.RUNTIME_CONFIG.API_URL);
+        frontendLogger.info('API_CONFIG', `Using runtime config API_URL: ${window.RUNTIME_CONFIG.API_URL}`);
         return window.RUNTIME_CONFIG.API_URL;
     }
     
@@ -20,8 +24,9 @@ const getBaseUrl = () => {
         // Use the same protocol as the current page
         const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
         const protocolToUse = protocol.includes('https') ? 'https' : 'http';
-        console.log(`Using Codespace URL with ${protocolToUse} protocol`);
-        return `${protocolToUse}://${codespaceName}-3000.app.github.dev`;
+        const url = `${protocolToUse}://${codespaceName}-3000.app.github.dev`;
+        frontendLogger.info('API_CONFIG', `Using Codespace URL: ${url}`);
+        return url;
     }
     
     // Auto-detect protocol for local development
@@ -30,12 +35,13 @@ const getBaseUrl = () => {
 
     // In production (non-localhost), use the same origin since API and frontend are co-hosted
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-        console.log('Using same-origin API URL');
+        frontendLogger.info('API_CONFIG', `Using same-origin API URL: ${window.location.origin}`);
         return window.location.origin;
     }
 
-    console.log(`Using default localhost URL with ${protocolToUse} protocol`);
-    return `${protocolToUse}://localhost:3000`;
+    const url = `${protocolToUse}://localhost:3000`;
+    frontendLogger.info('API_CONFIG', `Using default localhost URL: ${url}`);
+    return url;
 };
 
 export const API_BASE_URL = getBaseUrl();
@@ -53,3 +59,5 @@ export const api = {
         orderDetailDeliveries: '/api/order-detail-deliveries'
     }
 };
+
+frontendLogger.info('API_CONFIG', 'API configuration loaded', { baseURL: api.baseURL, endpoints: Object.keys(api.endpoints) });

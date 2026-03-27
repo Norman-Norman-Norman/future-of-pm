@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { frontendLogger } from '../logger';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,18 +14,24 @@ export default function Login() {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    frontendLogger.componentMount('Login');
     const errorMsg = searchParams.get('error');
     if (errorMsg) {
+      frontendLogger.warn('Login', 'Login page loaded with error param', { error: errorMsg });
       setError(errorMsg);
     }
+    return () => frontendLogger.componentUnmount('Login');
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    frontendLogger.userAction('Login form submitted', { email });
     try {
       await login(email, password);
+      frontendLogger.info('Login', 'Login successful, navigating to home');
       navigate('/');
     } catch {
+      frontendLogger.error('Login', 'Login failed');
       setError('Login failed. Please try again.');
     }
   };

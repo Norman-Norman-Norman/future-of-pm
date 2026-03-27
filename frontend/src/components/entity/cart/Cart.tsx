@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
+=======
+import { useState, useEffect } from 'react';
+import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { frontendLogger } from '../../../logger';
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
 
 const DISCOUNT_RATE = 0.05;
 const COUPON_DISCOUNT_RATE = 0.10;
@@ -15,6 +23,15 @@ export default function Cart() {
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState('');
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    frontendLogger.componentMount('Cart');
+    frontendLogger.info('Cart', `Cart page loaded with ${items.length} unique items`);
+    return () => frontendLogger.componentUnmount('Cart');
+  }, []);
+
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = subtotal * DISCOUNT_RATE;
   const couponDiscount = couponApplied ? subtotal * COUPON_DISCOUNT_RATE : 0;
@@ -22,12 +39,24 @@ export default function Cart() {
   const grandTotal = subtotal - discount - couponDiscount + shipping;
 
   const handleApplyCoupon = () => {
+<<<<<<< HEAD
     if (couponCode.trim().toLowerCase() === 'techconnect') {
       setCouponApplied(true);
       setCouponError('');
     } else {
       setCouponError('Invalid coupon code');
       setCouponApplied(false);
+=======
+    frontendLogger.userAction('Apply coupon', { code: couponCode });
+    if (couponCode.trim().toLowerCase() === 'techconnect') {
+      setCouponApplied(true);
+      setCouponError('');
+      frontendLogger.info('Cart', 'Coupon applied successfully', { code: couponCode, discountRate: COUPON_DISCOUNT_RATE });
+    } else {
+      setCouponError('Invalid coupon code');
+      setCouponApplied(false);
+      frontendLogger.warn('Cart', 'Invalid coupon code attempted', { code: couponCode });
+>>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
     }
   };
 

@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { frontendLogger } from '../logger';
 
 const Footer: React.FC = () => {
   const { darkMode } = useTheme();
+
+  useEffect(() => {
+    frontendLogger.componentMount('Footer');
+    return () => frontendLogger.componentUnmount('Footer');
+  }, []);
   
   return (
     <footer className={`${darkMode ? 'bg-gray-900 text-gray-300' : 'bg-gray-200 text-gray-700'} py-8 transition-colors duration-300`}>

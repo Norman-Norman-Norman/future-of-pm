@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { frontendLogger } from '../../../logger';
 
 interface Supplier {
   supplierId: number;
@@ -45,14 +46,22 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
     e.preventDefault();
     try {
       if (product) {
-        await axios.put(`${api.baseURL}${api.endpoints.products}/${product.productId}`, formData);
+        const url = `${api.baseURL}${api.endpoints.products}/${product.productId}`;
+        frontendLogger.apiRequest('PUT', url, formData);
+        await axios.put(url, formData);
+        frontendLogger.apiResponse('PUT', url, 200);
+        frontendLogger.userAction('Product updated', { productId: product.productId, name: formData.name });
       } else {
-        await axios.post(`${api.baseURL}${api.endpoints.products}`, formData);
+        const url = `${api.baseURL}${api.endpoints.products}`;
+        frontendLogger.apiRequest('POST', url, formData);
+        await axios.post(url, formData);
+        frontendLogger.apiResponse('POST', url, 201);
+        frontendLogger.userAction('Product created', { name: formData.name });
       }
       onSave();
       onClose();
     } catch (error) {
-      console.error('Error saving product:', error);
+      frontendLogger.error('ProductForm', 'Error saving product', error);
     }
   };
 
