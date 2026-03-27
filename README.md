@@ -1,608 +1,501 @@
-
-# OctoCAT Supply
+# Build Guild: Zero to Agents — Product Management Edition
 
 ![OctoCAT Supply](./frontend/public/hero.png)
 
-## Executive Summary
+> **The base repository for the Build Guild "Zero to Agents" workshop series.**
+> This version of the lab has been used to train over 100,000 engineers across GitHub, Microsoft, and partner organizations on how to move from basic Copilot usage to a fully governed, agentic product development workflow.
 
-This repository is the working artifact behind a product management talk for a Fortune 500 audience on how to use AI, GitHub Copilot, and agentic workflows to evolve a real product inside the GitHub ecosystem without losing control of quality, governance, or traceability.
+This is the **Product Management edition** of Zero to Agents. It goes beyond code generation to demonstrate how GitHub Copilot, custom agents, prompt files, instruction files, skills, and MCP integrations come together to run a complete product operating system — from customer research and feature specification through implementation, testing, documentation, and deployment — all inside a single GitHub repository.
 
-Watch the talk: [YouTube presentation](https://www.youtube.com/watch?v=TOAAKp9NYDw)
+The lab is built on top of **OctoCAT Supply**, a working B2B supply chain management application with a TypeScript monorepo, an Express REST API, a React SPA frontend, in-memory seed data, Swagger documentation, infrastructure-as-code for Azure, and over 80 custom Copilot agents representing product managers, test writers, codebase analysts, market researchers, and dozens of customer personas.
 
-Reference repository: [customize-your-repo-with-github-copilot](https://github.com/microsoftnorman/customize-your-repo-with-github-copilot)
+**Watch the talk:** [YouTube presentation](https://www.youtube.com/watch?v=TOAAKp9NYDw)
 
-The point of the talk is not that AI can generate code. The point is that AI can participate in a governed product operating system:
+**Reference customization repo:** [customize-your-repo-with-github-copilot](https://github.com/microsoftnorman/customize-your-repo-with-github-copilot)
 
-- A live product gives the agents real context.
-- Specs, prompts, and custom instructions constrain the work.
-- GitHub issues and pull requests create traceability.
-- Human review remains the approval boundary.
-- Documentation, architecture, and deployment assets stay in the same system of record.
+---
 
-This repo demonstrates those practices end to end using a TypeScript monorepo for a B2B supply chain demo application called OctoCAT Supply.
+## Learning Outcomes
 
-## What This Proves
+By the end of this lab, you will be able to:
 
-This repository is designed to answer a board-level question: "Can an organization use agentic development in a way that is auditable, compliant, and operationally credible?"
+1. **Customize Copilot for your repository** — Create and apply project-wide and scoped instruction files (`.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`) that shape how Copilot understands your codebase, your conventions, and your constraints.
 
-The answer presented here is yes, if the workflow is structured correctly.
+2. **Build custom agents and chat modes** — Design specialized agents (`.github/agents/*.agent.md`) that embody specific roles — a product manager, a ruthless test writer, a warehouse manager persona, a first-time buyer — each with bounded responsibilities, domain knowledge, and tool access.
 
-The controls demonstrated in this repo are practical rather than theoretical:
+3. **Author reusable prompt files** — Write prompt files (`.github/prompts/*.prompt.md`) that automate repetitive multi-step workflows like documentation updates and test coverage audits, so that any engineer on the team can execute a governed workflow with a single slash command.
 
-- Product context lives in version control through docs, specs, and architecture artifacts.
-- Agent behavior is bounded through repository instructions, scoped instruction files, and custom agents.
-- Implementation work can be driven from issues, prompts, designs, and acceptance criteria.
-- Changes remain reviewable through diffs, pull requests, and code ownership.
-- Deployment intent is captured as infrastructure as code with documented environment assumptions.
-- Residual gaps are called out explicitly rather than hidden.
+4. **Create and use skills** — Package domain-specific knowledge and multi-step procedures into skills (`.github/skills/*/SKILL.md`) that agents invoke automatically — commit-and-push with issue compliance, pull request creation with structured templates, GitHub issue creation from specs.
 
-## The Product
+5. **Drive implementation from design artifacts** — Use Copilot Vision to interpret UI mockups (`docs/design/*.png`), generate implementation plans, scaffold React components, and wire up API routes — all grounded in the repository's custom instructions rather than generic patterns.
 
-OctoCAT Supply is a B2B supply chain management demo application with two workspaces:
+6. **Generate and improve test coverage** — Use the `@martin` test agent and the `Unit-Test-Coverage` prompt file to audit existing test gaps, generate route-level integration tests that follow the established `branch.test.ts` pattern, and verify coverage with `npm run test`.
 
-- `api/`: Express 4 REST API in TypeScript with in-memory seed data and Swagger/OpenAPI.
-- `frontend/`: React 18 SPA with Vite, Tailwind CSS, React Query, React Router, and Context-based auth/theme state.
+7. **Run a governed agentic SDLC** — Execute the full product lifecycle — discovery, stakeholder feedback, specification, implementation, testing, documentation, commit, PR, and continuous improvement — where each phase has a designated agent, a human review gate, and an audit trail in GitHub.
 
-The domain model covers headquarters, branches, orders, products, suppliers, deliveries, and order fulfillment relationships.
+8. **Understand the control boundaries** — Know where AI autonomy is appropriate (drafting, scaffolding, analysis, test generation) and where human judgment is required (prioritization, architectural exceptions, merge approval, production release).
 
-```mermaid
-erDiagram
-    Headquarters ||--o{ Branch: has
-    Branch ||--o{ Order: placed_at
-    Order ||--o{ OrderDetail: contains
-    OrderDetail ||--o{ OrderDetailDelivery: fulfilled_by
-    OrderDetail }|--|| Product: references
-    Delivery ||--o{ OrderDetailDelivery: includes
-    Supplier ||--o{ Delivery: provides
+---
+
+## How This Lab Is Structured
+
+The lab is organized as a progression. Each section builds on the previous one, moving you from foundational Copilot customization through to full agentic product management. You can run the entire sequence in order, or jump to the section that matches your current skill level.
+
+```
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                    ZERO TO AGENTS PROGRESSION                       │
+  │                                                                     │
+  │   Lab 1: Instructions & Prompts                                     │
+  │     └──► Lab 2: Custom Agents                                       │
+  │            └──► Lab 3: Vision & Agentic Implementation              │
+  │                   └──► Lab 4: Test Generation & Coverage            │
+  │                          └──► Lab 5: Documentation & Governance     │
+  │                                 └──► Lab 6: Full Product Management │
+  └─────────────────────────────────────────────────────────────────────┘
 ```
 
-## The Operating Model
+---
 
-The talk is built around a simple claim: agentic product development is trustworthy only when product management, engineering, and governance are operating in the same loop.
+## Lab 1: Create Custom Instructions and Prompt Files
 
-```mermaid
-flowchart LR
-    A[Live Product] --> B[Observed Gaps and Opportunities]
-    B --> C[Specs and Roadmap]
-    C --> D[GitHub Issues and Milestones]
-    D --> E[Copilot Prompts and Agents]
-    E --> F[Code, Tests, Docs, IaC]
-    F --> G[Pull Request Review]
-    G --> H[Approval and Deployment]
-    H --> A
-```
+**Learning outcome:** Understand how instruction files change Copilot's behavior and how prompt files automate multi-step workflows.
 
-In practice, that means:
+This activity is performed together as a group.
 
-- Product managers define intent in docs, specs, issues, and acceptance criteria.
-- Agentic users accelerate analysis, scaffolding, implementation, test generation, and documentation updates.
-- Engineers review outputs, tighten assumptions, and own the final merge decision.
-- Governance teams inspect the same artifacts the builders use instead of relying on a parallel reporting stream.
+### 1.1 — Explore the codebase with Copilot
 
-## Why GitHub Is The Right Control Plane
+Before customizing anything, use Copilot's Ask Mode and Agent Mode to see how it responds to your codebase out of the box. This establishes a baseline so you can see the difference instructions make.
 
-This repository uses GitHub as the coordination layer for product, engineering, and compliance work.
+- Open GitHub Copilot Chat and try these prompts:
+  - `Please give me details about the API of this project.`
+  - `Are there any core features missing in my project?`
+- Use Agent Mode to build and run the existing app:
+  - `Please build and run my project so that I can see its existing state.`
+  - Review the running store at `http://localhost:5137` (frontend) and `http://localhost:3000/api-docs` (Swagger UI).
 
-```mermaid
-flowchart TD
-    subgraph Governance
-        A1[Copilot Instructions]
-        A2[Scoped Instruction Files]
-        A3[Custom Agents]
-        A4[CODEOWNERS]
-    end
+### 1.2 — Create custom instruction files
 
-    subgraph Product System
-        B1[README and Architecture]
-        B2[Feature Specs]
-        B3[Customer POV Research]
-        B4[Roadmap Inputs]
-    end
+Instruction files teach Copilot about your project's conventions, architecture, and constraints. They are Markdown files placed in `.github/` that Copilot reads automatically.
 
-    subgraph Delivery System
-        C1[API and Frontend Code]
-        C2[Tests]
-        C3[Docs]
-        C4[Infra as Code]
-    end
+- Use the **Gear icon** in the GitHub Copilot Chat window and select **Generate Agent Instructions**.
+- Create a **project-wide** instructions file:
+  - File: `.github/copilot-instructions.md`
+  - This file should describe the monorepo structure, key commands, coding conventions, and pitfalls that apply everywhere.
+- Create an **API-scoped** instructions file:
+  - File: `.github/instructions/API.instructions.md`
+  - Sample prompt: `Please create an API Specific custom instructions set and save in #API.instructions.md`
+  - This file should cover route structure, model definitions, seed data patterns, Swagger JSDoc, and Vitest testing conventions.
 
-    subgraph Review System
-        D1[Issues]
-        D2[Pull Requests]
-        D3[Human Approval]
-    end
+### 1.3 — Observe the difference
 
-    Governance --> Product System
-    Product System --> Delivery System
-    Delivery System --> Review System
-    Review System --> Governance
-```
+Ask Copilot the same questions you asked in step 1.1. Notice how the responses are now grounded in your project's actual patterns and conventions instead of generic TypeScript advice.
 
-The important point is not tool sprawl. It is consolidation. Product intent, agent instructions, implementation artifacts, and approval decisions all sit in one audit trail.
+### 1.4 — Review existing prompt files
 
-## What Exists In This Repository Today
+This repository ships with two prompt files in `.github/prompts/`:
 
-This repo contains the elements required to show a credible agentic product workflow:
+| Prompt file | Purpose |
+| --- | --- |
+| `Unit-Test-Coverage.prompt.md` | Guided test coverage audit and generation for API routes |
+| `documentation-update.prompt.md` | Automated documentation refresh across README, architecture, and build docs |
 
-| Area | Evidence in repo | Why it matters |
+Review these files to understand the prompt file format. Execute one if you like — use the `/` slash command in Copilot Chat to invoke a prompt file.
+
+---
+
+## Lab 2: Review and Create Custom Agents (Chat Modes)
+
+**Learning outcome:** Understand how custom agents scope Copilot's role, knowledge, and tool access to a specific job.
+
+This activity is performed together as a group.
+
+### 2.1 — Review existing agents
+
+Browse the `.github/agents/` directory. This repository contains **84 custom agents** spanning five categories:
+
+| Category | Examples | Count |
 | --- | --- | --- |
-| Product narrative | `README.md`, `docs/full-spec.md`, `docs/specs/` | Captures scope, business intent, and expected behavior |
-| Architecture | `docs/architecture.md` | Makes the system shape inspectable before implementation changes |
-| Agent governance | `.github/copilot-instructions.md`, `.github/instructions/` | Constrains how Copilot behaves in this codebase |
-| Specialized agents | `.github/agents/` | Demonstrates persona- or task-specific agent workflows |
-| Product research | `docs/customer-pov/` | Shows customer and stakeholder feedback as first-class artifacts |
-| Working software | `api/`, `frontend/` | Grounds the exercise in a live product rather than a slide deck |
-| Deployment intent | `infra/`, `azure.yaml`, `docs/deployment.md` | Connects product work to operational reality |
-| Quality signal | `api` tests, lint/build scripts | Shows that generated work is expected to compile and be reviewed |
+| **Product and strategy** | `product-manager`, `backlog-analyst`, `market-researcher`, `codebase-analyst` | 5 |
+| **Engineering** | `martin-test-writer` (ruthless test coverage), `ImplementationIdeas`, `copilotrepo` | 3 |
+| **Internal personas** | `warehouse-manager`, `branch-manager`, `operations-director`, `procurement-officer`, `store-associate` | 5 |
+| **Customer/shopper personas** | `first-time-buyer`, `wholesale-buyer`, `accessibility`, `luxury-cat-owner`, `mayor-humdinger`, and 60+ more | 65+ |
+| **Skills** | `commit-and-push`, `create-pull-request`, `create-github-issue`, `issue-compliance`, `create-agent-skills` | 6 |
 
-## Compliant Agentic Product Management
+Each agent file (`.agent.md`) defines the agent's identity, domain expertise, tool access, and behavioral constraints. Open a few and read how they are structured.
 
-The safest way to use AI in product and engineering is to define where autonomy stops.
+### 2.2 — Create your own agent
 
-This repo supports a compliant operating posture with these principles:
+Design a custom agent for a role that would be useful on your team. Think about:
 
-- AI can propose, draft, scaffold, summarize, and implement.
-- AI should not silently redefine scope, acceptance criteria, or production approvals.
-- Every meaningful change should map to a documented requirement or issue.
-- Pull requests are the formal review boundary.
-- Human reviewers own the merge decision.
-- Known gaps are documented as risks, not buried as assumptions.
+- What role does this agent play? (QA lead? Security reviewer? Onboarding guide?)
+- What files and context should it read?
+- What tools should it have access to?
+- What should it explicitly **not** do?
 
-### Control Boundaries
+Create the file in `.github/agents/` following the pattern you observed.
 
-| Activity | Agent can assist | Human must approve |
+---
+
+## Lab 3: Requirements, Vision, and Agentic Implementation
+
+**Learning outcome:** Use Copilot to drive implementation from design artifacts, specs, and product requirements using agents and vision.
+
+### 3.1 — Implement a new product from a design mockup
+
+This exercise demonstrates Copilot Vision — the ability to interpret images and translate them into code.
+
+1. Open Agent Mode. Select a model that supports vision (Claude Sonnet 4 or similar).
+2. Use the Mona figurine design mockup at `docs/design/MonaFigurine.png`.
+3. Try this prompt:
+   ```
+   Using the image #file:MonaFigurine.png, create a new product offering on the
+   OctoCAT Supply website. Price is $32.99, SKU is MONA-001, and description is
+   "A beautiful handcrafted figurine inspired by the Mona Lisa."
+   ```
+4. Watch Copilot generate seed data, API route changes, and frontend components — all following the repository's custom instructions.
+5. Review the changes. If a Pull Request was created, review it and merge the version you prefer.
+
+### 3.2 — Implement a cart page from a design
+
+1. Synchronize your branch with the latest main branch.
+2. Start a new Agent Mode chat.
+3. Drag the `docs/design/cart.png` file into the chat window.
+4. Ask Copilot to implement a cart icon and cart page that displays items in the cart.
+5. Review the implementation against the design mockup.
+
+---
+
+## Lab 4: Test Generation and Coverage Improvement
+
+**Learning outcome:** Use Copilot agents and prompt files to audit test coverage, generate missing tests, and improve code quality.
+
+### 4.1 — Audit current test coverage
+
+The API has 8 route files but only 1 test file today. This is intentional — it gives you real gaps to work with.
+
+| Route file | Test file | Status |
+| --- | --- | --- |
+| `api/src/routes/branch.ts` | `api/src/routes/branch.test.ts` | **Covered** |
+| `api/src/routes/delivery.ts` | — | Missing |
+| `api/src/routes/headquarters.ts` | — | Missing |
+| `api/src/routes/order.ts` | — | Missing |
+| `api/src/routes/orderDetail.ts` | — | Missing |
+| `api/src/routes/orderDetailDelivery.ts` | — | Missing |
+| `api/src/routes/product.ts` | — | Missing |
+| `api/src/routes/supplier.ts` | — | Missing |
+
+Frontend components have no automated tests.
+
+Start by analyzing the gap:
+- Sample prompt (Ask Mode): `Please analyze my current test coverage and identify any missing test cases.`
+
+### 4.2 — Generate tests using the prompt file
+
+Use the `Unit-Test-Coverage` prompt file to generate integration tests for the missing routes:
+
+- Invoke: `/Unit-Test-Coverage` in Copilot Chat.
+- Or ask directly: `Write route integration tests for the product and supplier routes following the branch.test.ts pattern.`
+
+The test pattern to follow:
+- Each test file co-locates with its route: `<route>.test.ts`
+- `beforeEach` wires a fresh Express app and resets seed data via the route's exported `reset*()` function
+- Tests cover CRUD operations (list all, get by ID, create, update, delete), 404 handling, and edge cases
+- Assertions target status codes and response shape, not internal implementation
+
+### 4.3 — Run tests and verify
+
+```bash
+npm run test          # All workspaces
+npm run test:api      # API tests only
+```
+
+### 4.4 — Bonus: MCP-powered test execution
+
+If you have the Playwright MCP server configured, ask Copilot to execute the tests through the MCP integration for a browser-driven verification experience.
+
+---
+
+## Lab 5: Documentation and Governance
+
+**Learning outcome:** Use prompt files and agents to keep documentation synchronized with the codebase, and understand the governance model that makes agentic work auditable.
+
+### 5.1 — Create a documentation update prompt
+
+Use Copilot to create or complete a custom prompt file that automates documentation updates:
+
+- Sample prompt: `Complete the prompt file to update the documentation of this project or the specified file mentioned by the user. Only update the prompt file, do not update any documentation.`
+
+### 5.2 — Execute the documentation prompt
+
+Run the prompt file to update documentation:
+- Use the `/` slash command to invoke your prompt.
+- Specify target files: `README.md`, `docs/architecture.md`, or let it update everything.
+
+### 5.3 — Understand the governance model
+
+This repository demonstrates that agentic development is auditable when the workflow is structured correctly. The key controls are:
+
+**What agents can do vs. what humans must approve:**
+
+| Activity | Agent assists with | Human decides |
 | --- | --- | --- |
 | Problem framing | Summaries, gap analysis, draft specs | Final prioritization and success criteria |
 | Roadmap shaping | Milestone proposals, issue drafts, dependency mapping | Portfolio sequencing and tradeoff decisions |
 | Implementation | Code changes, tests, docs, refactors | Final review, architectural exceptions, release signoff |
-| Compliance support | Audit-friendly documentation, rationale capture, traceability | Policy interpretation and risk acceptance |
+| Compliance support | Audit-friendly docs, rationale capture, traceability | Policy interpretation and risk acceptance |
 | Deployment | Workflow generation, IaC drafting, environment docs | Secret management, approvals, production release |
 
-## Example Talk Track
-
-The product talk can be run as a live progression instead of a static presentation.
-
-1. Start with the live product and explain the current user experience.
-2. Show the specs, architecture, and customer POV documents that define product intent.
-3. Demonstrate how custom instructions and agents narrow the solution space.
-4. Use prompt-driven analysis to identify roadmap opportunities.
-5. Move from roadmap item to implementation plan inside GitHub.
-6. Generate or refine code, tests, and docs under review.
-7. Close by showing the explicit control points and residual risks.
-
-## Sample Prompts For Safe AI SDLC
-
-This section teaches how to use the custom agents and prompts in this repository to run a governed software development lifecycle with AI. Each phase of the SDLC maps to specific agents, and the prompts below show exactly how to invoke them.
-
-The key principle: **different agents own different phases**. A product manager agent should never silently write production code. A test writer agent should never silently change scope. Each agent is constrained to its role, and human review gates sit between phases.
-
-### How Agents Are Invoked
-
-In VS Code Copilot Chat, switch to an agent using the mode picker or `@agent-name` syntax. Each agent listed below corresponds to a file in `.github/agents/`.
-
 ---
 
-### Phase 1: Discovery and Research
+## Lab 6: Full Product Management with Agents
 
-**Goal:** Understand the current product, market, and user needs before proposing changes.
+**Learning outcome:** Run a complete governed SDLC using specialized agents — from discovery through deployment and continuous improvement.
 
-#### @product-manager — Strategic product analysis
+This is what makes the Product Management edition different from the standard Zero to Agents lab. This section walks you through the full agent-assisted SDLC, showing how different agents own different phases and human review gates sit between them.
 
-```text
-Review the OctoCAT Supply product against the specs in docs/specs/ and the customer feedback
-in docs/customer-pov/. Identify the three highest-value gaps for our next quarter. For each
-gap, include the user problem, supporting evidence from the repo, competitive risk, and a
-measurable success outcome.
+### Phase 1 — Discovery and Research
+
+Use the `@product-manager` agent to analyze the product against specs and customer feedback:
+
+```
+Review the OctoCAT Supply product against the specs in docs/specs/ and the customer
+feedback in docs/customer-pov/. Identify the three highest-value gaps for our next
+quarter. For each gap, include the user problem, supporting evidence from the repo,
+competitive risk, and a measurable success outcome.
 ```
 
-#### @market-researcher — Competitive intelligence
+Use `@codebase-analyst` for a technical inventory:
 
-```text
-Research how Amazon Business, Chewy for Business, and PetSmart handle bulk ordering and
-reorder workflows for B2B customers. Return a structured comparison with feature gaps
-relevant to OctoCAT Supply.
+```
+Produce a full inventory of the API routes, models, and frontend pages. For each
+route, report whether it has test coverage, Swagger documentation, and seed data.
+Flag any routes missing tests.
 ```
 
-#### @codebase-analyst — Technical inventory
+Use `@market-researcher` for competitive intelligence:
 
-```text
-Produce a full inventory of the API routes, models, and frontend pages. For each route,
-report whether it has test coverage, Swagger documentation, and seed data. Flag any routes
-missing tests.
+```
+Research how Amazon Business, Chewy for Business, and PetSmart handle bulk ordering
+and reorder workflows for B2B customers. Return a structured comparison with feature
+gaps relevant to OctoCAT Supply.
 ```
 
----
+### Phase 2 — Stakeholder Feedback (Persona Agents)
 
-### Phase 2: Stakeholder Feedback (Persona Agents)
+Pressure-test ideas against real user perspectives before committing to implementation. These persona agents respond **in character** with authentic priorities and concerns.
 
-**Goal:** Pressure-test ideas against real user perspectives before committing to implementation. These persona agents respond **in character** with authentic priorities and concerns.
+- `@marcus-chen-warehouse-manager` — Operations reality check
+- `@sarah-mitchell-operations-director` — Executive lens and KPI priorities
+- `@priya-sharma-branch-manager` — Branch-level operations and P&L concerns
+- `@david-okafor-procurement-officer` — Supplier compliance and cost optimization
+- `@jake-rodriguez-store-associate` — Frontline usability and daily workflow
 
-#### @marcus-chen-warehouse-manager — Operations reality check
+Plus 65+ customer personas (first-time buyer, wholesale bulk buyer, accessibility-dependent shopper, luxury cat owner, budget-conscious buyer, mobile-only shopper, Mayor Humdinger, and many more) for e-commerce feature evaluation.
 
-```text
-I'm considering adding a barcode scanning feature to the order fulfillment flow.
-Walk me through how your warehouse team would actually use this during a morning
-rush. What would make it useful versus another feature that looks good in demos
-but slows your people down?
+### Phase 3 — Specification and Planning
+
+Use `@product-manager` to turn validated ideas into scoped work:
+
 ```
-
-#### @sarah-mitchell-operations-director — Executive lens
-
-```text
-We're proposing a new analytics dashboard for branch performance comparison.
-Review the current product and tell me what KPIs you'd actually need on day one,
-what would be noise, and what's missing that would make you bring this to a
-board meeting.
-```
-
-#### @priya-sharma-branch-manager — Branch-level operations
-
-```text
-Look at the current order management workflow. Tell me what frustrates you about
-it when you're trying to hit your monthly targets, and what one change would save
-your team the most time per week.
-```
-
-#### @david-okafor-procurement-officer — Procurement and compliance
-
-```text
-Review the supplier management features in the app. Tell me what's missing for
-you to actually trust this system for managing vendor contracts, tracking delivery
-reliability, and running a quarterly supplier scorecard.
-```
-
-#### @jake-rodriguez-store-associate — Frontline usability
-
-```text
-Use the product catalog and order pages. Tell me what's slow, what's confusing,
-and what you'd change if you had to use this system for 8 hours a day on a tablet
-at the counter.
-```
-
----
-
-### Phase 3: Specification and Planning
-
-**Goal:** Turn validated ideas into scoped, implementable work items with clear acceptance criteria.
-
-#### @product-manager — Feature specification
-
-```text
 Create a complete feature spec for a bulk reorder workflow. Include the user problem,
 target personas, proposed UX flow, API changes, data model impact, acceptance criteria,
-risks, and a breakdown into GitHub issues sized for individual pull requests. Follow the
-format used in docs/specs/.
+risks, and a breakdown into GitHub issues sized for individual pull requests.
 ```
 
-#### @product-manager — Issue creation from spec
+Use `@backlog-analyst` for backlog health:
 
-```text
-Read docs/specs/logistics.md and create GitHub issues for every unimplemented feature
-described in the spec. Each issue should include acceptance criteria, affected files,
-and a testing expectation. Use the create-github-issue skill.
 ```
-
-#### @backlog-analyst — Backlog health check
-
-```text
 Scan all open GitHub issues. Cross-reference them against the specs in docs/specs/
 and the current codebase. Report which issues have specs, which are duplicates, which
 are stale, and which are missing acceptance criteria.
 ```
 
----
+### Phase 4 — Implementation
 
-### Phase 4: Implementation
+Use the default agent with repository instructions to implement scoped changes:
 
-**Goal:** Generate code changes that are bounded by the repository's instructions, tested, and documented.
-
-#### Default agent (or @copilotrepo for repo setup) — Constrained implementation
-
-```text
+```
 Implement the supplier rating feature described in issue #42. Follow the repository
 instructions in .github/instructions/API.instructions.md. Add the route, model, seed
-data, and Swagger docs. Do not modify existing routes. Call out any assumptions that
-need human review before merge.
+data, and Swagger docs. Do not modify existing routes.
 ```
 
-#### @implementation-ideas — Explore multiple approaches
+Use `@implementation-ideas` to explore multiple approaches before committing.
 
-```text
-Explore three different approaches for adding real-time delivery tracking to the
-order detail page. For each approach, show the tradeoffs in complexity, testability,
-and user experience. Then implement the best one as a pull request.
+### Phase 5 — Testing
+
+Use `@martin` — the ruthless test writer — to audit gaps and generate tests:
+
 ```
-
----
-
-### Phase 5: Testing and Quality
-
-**Goal:** Prove that the implementation works and doesn't break existing behavior. This is Martin's domain.
-
-#### @martin — Audit existing test coverage
-
-```text
 Audit the API test coverage. For every route file in api/src/routes/, report whether
 a test file exists, what behaviors are covered, and what gaps remain. Prioritize the
 gaps by defect risk and propose the exact tests to add.
 ```
 
-#### @martin — Write missing tests
+### Phase 6 — Documentation and Review
 
-```text
-Write route integration tests for the product, supplier, and order routes. Follow the
-branch.test.ts pattern. Cover CRUD operations, 404 handling, and any edge cases you
-find in the route code. Add reset functions to the route files if they're missing.
-Fix any defects you find along the way.
-```
+Use the `documentation-update` prompt file to sync docs with code. Use `@product-manager` for a review-board risk summary on pull requests.
 
-#### @martin — Regression coverage for a bug fix
+### Phase 7 — Commit, PR, and Deployment
 
-```text
-I just fixed a bug where updating an order with a non-existent ID returned 500
-instead of 404. Write a regression test that proves the fix works, and check whether
-the same bug pattern exists in other routes.
-```
+Use the built-in skills:
 
-#### Reusable prompt — Unit-Test-Coverage
+- **commit-and-push** — Runs all tests, creates a conventional commit message tied to the related issue, and pushes.
+- **create-pull-request** — Creates a comprehensive PR with summary, rationale, issue links, test results, and reviewer guidance.
+- **issue-compliance** — Enforces that every commit links to a GitHub issue.
 
-> Use the prompt file `.github/prompts/Unit-Test-Coverage.prompt.md` to run a guided test coverage session for specific routes.
+### Phase 8 — Continuous Improvement
 
----
-
-### Phase 6: Documentation and Review
-
-**Goal:** Keep docs in sync with the code, and prepare changes for human review.
-
-#### Reusable prompt — Documentation Update
-
-> Use `.github/prompts/documentation-update.prompt.md` to automatically update README, architecture, build, and deployment docs to match the current codebase.
-
-#### @product-manager — Review-board risk summary
-
-```text
-Assess the changes in this pull request for blind spots. Analyze security, testing,
-data integrity, accessibility, operational readiness, documentation completeness, and
-rollback considerations. Distinguish between verified facts and assumptions that still
-need validation.
-```
-
-#### Default agent — Auditor perspective
-
-```text
-Review this repository for process integrity. Identify where product intent is
-documented, where agent behavior is constrained, where approvals should occur,
-and which areas still represent delivery risk or governance gaps.
-```
-
----
-
-### Phase 7: Commit, PR, and Deployment
-
-**Goal:** Package work into reviewable, traceable units with conventional commits and comprehensive PRs.
-
-#### Skill: commit-and-push
-
-```text
-Run all tests, then commit and push my changes with a conventional commit message
-tied to the related issue.
-```
-
-#### Skill: create-pull-request
-
-```text
-Create a pull request for this branch. Include a summary of what changed, why it
-changed, which issues it closes, what was tested, and what a reviewer should pay
-attention to.
-```
-
----
-
-### Phase 8: Continuous Improvement
-
-**Goal:** Use persona agents to evaluate shipped features and feed findings back into the next cycle.
-
-#### @sarah-mitchell-operations-director — Post-ship evaluation
-
-```text
-The analytics dashboard shipped last week. Review it as if you're preparing for
-your quarterly ops review. What works, what's missing, and what would you escalate
-to the product team?
-```
-
-#### @marcus-chen-warehouse-manager — Usability regression
-
-```text
-Walk through the delivery management workflow as someone who does this 50 times
-a day. Tell me if anything got worse, slower, or more confusing since the last
-update.
-```
-
-#### @copilotrepo — Improve agent governance
-
-```text
-Audit the current .github/ customization files. Are the instructions still accurate?
-Are any agents missing constraints? Are there new patterns in the codebase that should
-be captured in instructions? Propose updates.
-```
-
----
+Use persona agents to evaluate shipped features and feed findings back into the next cycle. Use `@copilotrepo` to audit and improve the agent governance configuration itself.
 
 ### SDLC Phase Map
 
-| SDLC Phase | Primary Agent | Supporting Agents | Human Gate |
-| --- | --- | --- | --- |
-| Discovery | @product-manager | @market-researcher, @codebase-analyst | Prioritization approval |
-| Stakeholder feedback | Persona agents (Marcus, Sarah, Priya, David, Jake) | Shopper personas | Feedback triage |
-| Specification | @product-manager | @backlog-analyst | Spec sign-off |
-| Implementation | Default agent | @implementation-ideas | Code review |
-| Testing | @martin | — | Test review + merge |
-| Documentation | Default agent | @product-manager | Doc review |
-| Commit and PR | Skills (commit-and-push, create-pull-request) | — | PR approval |
-| Continuous improvement | Persona agents | @copilotrepo | Roadmap update |
-
-### What This Proves About Safe AI SDLC
-
-1. **Separation of concerns.** Each agent has a bounded role. The product manager doesn't write code. The test writer doesn't change scope. Personas don't approve their own feedback.
-2. **Human review gates.** Every phase ends at a decision point that requires a human. AI proposes; humans approve.
-3. **Traceability.** Specs map to issues. Issues map to PRs. PRs map to tests. The entire chain is auditable in GitHub.
-4. **Constraint enforcement.** Repository instructions, scoped instruction files, and agent definitions prevent agents from drifting outside their mandate.
-5. **Honest gap reporting.** Agents are instructed to call out assumptions, risks, and missing coverage rather than hiding them.
-6. **Feedback loops.** Persona agents validate before implementation and evaluate after shipping, closing the learning cycle.
-
-## Example Roadmap Pattern Inside GitHub
-
-This is the roadmap pattern the talk advocates.
-
-```mermaid
-flowchart TD
-    A[Customer Signal or Operator Pain] --> B[Spec Update or New Feature Brief]
-    B --> C[GitHub Issue]
-    C --> D[Implementation Plan]
-    D --> E[Agent-Assisted Delivery]
-    E --> F[Tests and Docs Updated]
-    F --> G[Pull Request]
-    G --> H[Human Review and Approval]
-    H --> I[Release and Feedback]
-    I --> A
+```
+  Phase                  Primary Agent              Human Gate
+  ─────────────────────  ─────────────────────────  ──────────────────────
+  Discovery              @product-manager           Prioritization approval
+  Stakeholder feedback   Persona agents             Feedback triage
+  Specification          @product-manager           Spec sign-off
+  Implementation         Default agent              Code review
+  Testing                @martin                    Test review + merge
+  Documentation          Default agent              Doc review
+  Commit and PR          Skills                     PR approval
+  Continuous improvement Persona agents             Roadmap update
 ```
 
-A strong roadmap item in this model should always answer:
+---
 
-- What user or operator problem is being solved?
-- What evidence supports prioritization?
-- What files, APIs, or workflows are expected to change?
-- What tests and documents must change with the implementation?
-- What could go wrong operationally or from a compliance standpoint?
-- Who is the named human approver for merge and release?
+## The Product: OctoCAT Supply
 
-## Known Constraints And Honest Gaps
+The lab is built on a working B2B supply chain management application with two workspaces:
 
-The trustworthiness of an AI-enabled delivery model depends on naming the limits of the current build clearly.
+- **`api/`** — Express 4 REST API in TypeScript with in-memory seed data, Swagger/OpenAPI via JSDoc, 8 route files covering headquarters, branches, orders, products, suppliers, deliveries, and fulfillment relationships.
+- **`frontend/`** — React 18 SPA with Vite, Tailwind CSS, React Query v3, React Router DOM 7, and Context API for auth and theme state.
 
-Current constraints in this repo include:
+### Data Model
 
-- The API uses in-memory data. This is suitable for demos, not production persistence.
-- Authentication is client-side only and not production-grade security.
-- API route tests exist only for the `branch` route. The remaining seven route files (`delivery`, `headquarters`, `order`, `orderDetail`, `orderDetailDelivery`, `product`, `supplier`) have no test coverage yet. See the Test Coverage section below for the remediation plan.
-- Frontend automated test coverage is limited. No React component or integration tests exist.
-- Some deployment guidance is documented in detail, but operational hardening still depends on environment-specific decisions outside the repo.
-- As with any agentic workflow, prompt quality and human review discipline materially affect outcomes.
+```
+  Headquarters
+    └── Branch
+          └── Order
+                └── OrderDetail ──► Product
+                      └── OrderDetailDelivery
+                            └── Delivery ──► Supplier
+```
 
-These are not reasons to dismiss the model. They are the exact kinds of gaps a credible review board expects to see surfaced early.
+Eight entities: **Headquarters** → **Branch** → **Order** → **OrderDetail** → **Product**, **Supplier** → **Delivery** → **OrderDetailDelivery**. See [docs/architecture.md](./docs/architecture.md) for the full ERD and component architecture.
 
-## Test Coverage
+### Tech Stack
 
-### Current State
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, React Query, React Router |
+| Backend | Express 4, TypeScript, Swagger/OpenAPI, Vitest, Supertest |
+| Infrastructure | Docker, Azure Container Apps, Bicep IaC, GitHub Actions |
+| AI Tooling | GitHub Copilot, 84 custom agents, prompt files, skills, MCP integrations |
 
-The repository follows a Martin Fowler style test pyramid. API route-level integration tests using Vitest and Supertest are the primary safety net. The existing test file is:
+---
 
-| Route file | Test file | Status |
-| --- | --- | --- |
-| `api/src/routes/branch.ts` | `api/src/routes/branch.test.ts` | Covered |
-| `api/src/routes/delivery.ts` | — | **Missing** |
-| `api/src/routes/headquarters.ts` | — | **Missing** |
-| `api/src/routes/order.ts` | — | **Missing** |
-| `api/src/routes/orderDetail.ts` | — | **Missing** |
-| `api/src/routes/orderDetailDelivery.ts` | — | **Missing** |
-| `api/src/routes/product.ts` | — | **Missing** |
-| `api/src/routes/supplier.ts` | — | **Missing** |
-
-Frontend components currently have no automated tests.
-
-### Test Generation Plan
-
-Missing API tests will be generated following the established `branch.test.ts` pattern:
-
-1. **Pattern.** Each test file co-locates with its route (`<route>.test.ts`), wires a fresh Express app in `beforeEach`, and resets in-memory seed data via the route's exported `reset*()` function.
-2. **Coverage scope.** Every test file will cover CRUD operations (list, get-by-id, create, update, delete where applicable), 404 handling for missing resources, and any route-specific edge cases.
-3. **Agent workflow.** The `@martin` agent is configured to audit coverage gaps and generate tests that follow repository conventions. Invoke it with:
-   ```text
-   Write route integration tests for the product, supplier, and order routes. Follow the
-   branch.test.ts pattern. Cover CRUD operations, 404 handling, and any edge cases you
-   find in the route code. Add reset functions to the route files if they're missing.
-   ```
-4. **Execution.** Tests run via `npm run test` (all workspaces) or `npm run test:api` (API only). Vitest is configured in `api/vitest.config.ts`.
-5. **Governance.** Generated tests go through the same pull request review process as any other code. The `@martin` agent proposes; a human reviewer approves.
-
-### Frontend Testing Roadmap
-
-Frontend tests will be added incrementally following the test pyramid:
-
-- **Priority 1:** Targeted component tests for high-risk flows (cart, authentication state, order submission).
-- **Priority 2:** Feature-level tests for data-fetching behavior using React Query.
-- **Priority 3:** A small number of end-to-end tests for critical cross-boundary journeys, added only when lower-level tests cannot credibly cover the risk.
-
-## Running The Repo
+## Getting Started
 
 ### Prerequisites
 
 - Node.js 18 or higher
 - npm
+- VS Code with GitHub Copilot extension
 
-### Install
-
-```bash
-npm install
-```
-
-### Run both workspaces
+### Install and Run
 
 ```bash
-npm run dev
+npm install                    # Install all workspace dependencies
+npm run dev                    # Run API + Frontend concurrently
+                               #   API:      http://localhost:3000
+                               #   Swagger:  http://localhost:3000/api-docs
+                               #   Frontend: http://localhost:5137
 ```
 
-### Build
+### Other Commands
 
 ```bash
-npm run build
+npm run dev:api                # API only with hot reload
+npm run dev:frontend           # Vite dev server only
+npm run build                  # Build all workspaces
+npm run test                   # Run all tests (Vitest)
+npm run test:api               # API tests only
+npm run lint                   # Lint frontend (ESLint)
 ```
 
-### Test
+Or use VS Code tasks: `Ctrl+Shift+P` → `Run Task` → `Build API` / `Build Frontend`.
 
-```bash
-npm run test
-npm run lint
-```
+### MCP Server Setup (Optional)
 
-By default:
+For Playwright-powered test execution and browser automation:
+- `Ctrl+Shift+P` → `MCP: List servers` → `playwright` → `Start server`
 
-- API runs on port `3000`
-- Frontend runs on port `5137`
+---
 
 ## Repository Structure
 
-```text
-api/        Express REST API, models, routes, tests
-frontend/   React SPA, components, context, API integration
-docs/       Architecture, specs, customer POV, roadmap material
-infra/      Bicep deployment assets and deployment configuration
-.github/    Copilot instructions, agents, workflow customization
+```
+.github/
+  copilot-instructions.md          Project-wide Copilot instructions
+  instructions/                    Scoped instruction files (API, Frontend, Testing)
+  agents/                          84 custom agent definitions
+  prompts/                         Reusable prompt files
+  skills/                          Packaged multi-step workflows
+api/
+  src/routes/                      8 Express route files + 1 test file (gap: 7 missing)
+  src/models/                      TypeScript model definitions
+  src/seedData.ts                  In-memory seed data (resets on restart)
+frontend/
+  src/                             React components, context, API integration
+  public/                          Product images and static assets
+docs/
+  architecture.md                  System design and ERD
+  full-spec.md                     Complete functional specification
+  specs/                           Feature specifications by domain
+  customer-pov/                    38+ customer persona evaluations
+  design/                          UI mockups (MonaFigurine, cart, main, footer)
+infra/
+  main.bicep                       Azure infrastructure as code
+  resources.bicep                  Resource definitions
 ```
 
-## Recommended Demo Flow For Executives Or Review Boards
+---
 
-1. Show the live product.
-2. Show the architecture and specs that define the system.
-3. Show the repository instructions that constrain agent behavior.
-4. Run a prompt that identifies a roadmap gap from the active product.
-5. Translate that gap into a scoped implementation plan.
-6. Show how the same system can generate code, tests, docs, and deployment updates.
-7. End with the honest gap list and approval boundaries.
+## Known Constraints and Intentional Gaps
 
-That sequence changes the conversation from "AI writes code" to "AI participates in a governed product delivery system."
+This lab intentionally ships with gaps so you have real work to do. These are not bugs — they are learning opportunities.
+
+| Gap | Why it exists | Lab that addresses it |
+| --- | --- | --- |
+| 7 of 8 API routes have no tests | Gives you real coverage to generate | Lab 4 |
+| Frontend has no automated tests | Lets you design a test strategy from scratch | Lab 4 (stretch) |
+| Cart page is not implemented | Design mockup is provided for vision-driven implementation | Lab 3 |
+| Mona figurine product does not exist | Design mockup is provided for agentic product creation | Lab 3 |
+| Documentation may drift from code | Prompt file exists to fix this automatically | Lab 5 |
+| Auth is client-side only | Fine for demos; not production-grade | Acknowledged |
+| Data is in-memory (no DB) | Resets on restart; suitable for workshops | Acknowledged |
+
+---
 
 ## Supporting Documentation
 
-- [Architecture](./docs/architecture.md)
-- [Build Guide](./docs/build.md)
-- [Deployment Guide](./docs/deployment.md)
-- [Full Specification](./docs/full-spec.md)
-- [Feature Specs](./docs/specs/)
-- [Customer POV Research](./docs/customer-pov/)
+- [Architecture](./docs/architecture.md) — System design, ERD, component architecture
+- [Full Specification](./docs/full-spec.md) — Complete functional specification
+- [Feature Specs](./docs/specs/) — Domain-specific specs for catalog, orders, logistics, analytics, administration, customer experience
+- [Customer POV Research](./docs/customer-pov/) — 38+ buyer persona evaluations and competitive analyses
+- [Build Guide](./docs/build.md) — Build and tooling instructions
+- [Deployment Guide](./docs/deployment.md) — Azure Container Apps deployment
+
+---
 
 ## Acknowledgements
 
-Contributors to the OctoCAT Supply talk and demo experience include Dustin Ellis, Harald Kirschner, and Joel Norman.
+**Build Guild Zero to Agents** was created by Joel Norman ([@microsoftnorman](https://github.com/microsoftnorman)).
 
-This repository is intentionally positioned as a serious working example of product management with AI inside the GitHub ecosystem: ambitious enough to demonstrate leverage, but explicit enough about controls and gaps to earn trust.
+**GitHub Universe 2025 demo contributors:** Dustin Ellis ([@ellisd4](https://github.com/ellisd4)), Harald Kirschner ([@digitarald](https://github.com/digitarald)), Joel Norman ([@microsoftnorman](https://github.com/microsoftnorman)).
+
+**Demo testers:** Tina Saulsberry ([@Snuckles2](https://github.com/Snuckles2)).
+
+This entire project — including the hero image, the product data, the 84 custom agents, and this README — was built using AI and GitHub Copilot inside a governed product workflow. The point is not that AI wrote the code. The point is that AI participated in a structured, auditable, human-approved product operating system.
