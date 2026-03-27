@@ -102,51 +102,69 @@
 import express from 'express';
 import { OrderDetail } from '../models/orderDetail';
 import { orderDetails as seedOrderDetails } from '../seedData';
+import { logger } from '../logger';
 
+const TAG = 'OrderDetails';
 const router = express.Router();
 
 let orderDetails: OrderDetail[] = [...seedOrderDetails];
+logger.seed('orderDetails', orderDetails.length);
 
 // Create a new order detail
 router.post('/', (req, res) => {
+  logger.route(TAG, 'POST / - Creating new order detail', { body: req.body });
   const newOrderDetail: OrderDetail = req.body;
   orderDetails.push(newOrderDetail);
+  logger.info(TAG, `Order detail created`, { orderDetailId: newOrderDetail.orderDetailId, totalOrderDetails: orderDetails.length });
   res.status(201).json(newOrderDetail);
 });
 
 // Get all order details
 router.get('/', (req, res) => {
+  logger.route(TAG, `GET / - Returning all order details (${orderDetails.length} records)`);
   res.json(orderDetails);
 });
 
 // Get an order detail by ID
 router.get('/:id', (req, res) => {
-  const orderDetail = orderDetails.find(od => od.orderDetailId === parseInt(req.params.id));
+  const id = req.params.id;
+  logger.route(TAG, `GET /${id} - Looking up order detail`);
+  const orderDetail = orderDetails.find(od => od.orderDetailId === parseInt(id));
   if (orderDetail) {
+    logger.debug(TAG, `Found order detail: id=${id}`);
     res.json(orderDetail);
   } else {
+    logger.warn(TAG, `Order detail not found: id=${id}`);
     res.status(404).send('Order detail not found');
   }
 });
 
 // Update an order detail by ID
 router.put('/:id', (req, res) => {
-  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(req.params.id));
+  const id = req.params.id;
+  logger.route(TAG, `PUT /${id} - Updating order detail`, { body: req.body });
+  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(id));
   if (index !== -1) {
     orderDetails[index] = req.body;
+    logger.info(TAG, `Order detail updated: id=${id}`);
     res.json(orderDetails[index]);
   } else {
+    logger.warn(TAG, `Order detail not found for update: id=${id}`);
     res.status(404).send('Order detail not found');
   }
 });
 
 // Delete an order detail by ID
 router.delete('/:id', (req, res) => {
-  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(req.params.id));
+  const id = req.params.id;
+  logger.route(TAG, `DELETE /${id} - Deleting order detail`);
+  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(id));
   if (index !== -1) {
     orderDetails.splice(index, 1);
+    logger.info(TAG, `Order detail deleted: id=${id}`, { remainingOrderDetails: orderDetails.length });
     res.status(204).send();
   } else {
+    logger.warn(TAG, `Order detail not found for deletion: id=${id}`);
     res.status(404).send('Order detail not found');
   }
 });

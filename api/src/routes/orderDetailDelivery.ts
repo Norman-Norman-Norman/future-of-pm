@@ -102,51 +102,69 @@
 import express from 'express';
 import { OrderDetailDelivery } from '../models/orderDetailDelivery';
 import { orderDetailDeliveries as seedOrderDetailDeliveries } from '../seedData';
+import { logger } from '../logger';
 
+const TAG = 'OrderDetailDeliveries';
 const router = express.Router();
 
 let orderDetailDeliveries: OrderDetailDelivery[] = [...seedOrderDetailDeliveries];
+logger.seed('orderDetailDeliveries', orderDetailDeliveries.length);
 
 // Create a new order detail delivery
 router.post('/', (req, res) => {
+  logger.route(TAG, 'POST / - Creating new order detail delivery', { body: req.body });
   const newOrderDetailDelivery: OrderDetailDelivery = req.body;
   orderDetailDeliveries.push(newOrderDetailDelivery);
+  logger.info(TAG, `Order detail delivery created`, { deliveryId: newOrderDetailDelivery.deliveryId, total: orderDetailDeliveries.length });
   res.status(201).json(newOrderDetailDelivery);
 });
 
 // Get all order detail deliveries
 router.get('/', (req, res) => {
+  logger.route(TAG, `GET / - Returning all order detail deliveries (${orderDetailDeliveries.length} records)`);
   res.json(orderDetailDeliveries);
 });
 
 // Get an order detail delivery by ID
 router.get('/:id', (req, res) => {
-  const orderDetailDelivery = orderDetailDeliveries.find(odd => odd.deliveryId === parseInt(req.params.id));
+  const id = req.params.id;
+  logger.route(TAG, `GET /${id} - Looking up order detail delivery`);
+  const orderDetailDelivery = orderDetailDeliveries.find(odd => odd.deliveryId === parseInt(id));
   if (orderDetailDelivery) {
+    logger.debug(TAG, `Found order detail delivery: id=${id}`);
     res.json(orderDetailDelivery);
   } else {
+    logger.warn(TAG, `Order detail delivery not found: id=${id}`);
     res.status(404).send('Order detail delivery not found');
   }
 });
 
 // Update an order detail delivery by ID
 router.put('/:id', (req, res) => {
-  const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(req.params.id));
+  const id = req.params.id;
+  logger.route(TAG, `PUT /${id} - Updating order detail delivery`, { body: req.body });
+  const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(id));
   if (index !== -1) {
     orderDetailDeliveries[index] = req.body;
+    logger.info(TAG, `Order detail delivery updated: id=${id}`);
     res.json(orderDetailDeliveries[index]);
   } else {
+    logger.warn(TAG, `Order detail delivery not found for update: id=${id}`);
     res.status(404).send('Order detail delivery not found');
   }
 });
 
 // Delete an order detail delivery by ID
 router.delete('/:id', (req, res) => {
-  const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(req.params.id));
+  const id = req.params.id;
+  logger.route(TAG, `DELETE /${id} - Deleting order detail delivery`);
+  const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(id));
   if (index !== -1) {
     orderDetailDeliveries.splice(index, 1);
+    logger.info(TAG, `Order detail delivery deleted: id=${id}`, { remaining: orderDetailDeliveries.length });
     res.status(204).send();
   } else {
+    logger.warn(TAG, `Order detail delivery not found for deletion: id=${id}`);
     res.status(404).send('Order detail delivery not found');
   }
 });
