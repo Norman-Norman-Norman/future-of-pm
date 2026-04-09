@@ -7,6 +7,8 @@
  *       required:
  *         - headquartersId
  *         - name
+ *         - description
+ *         - contactPerson
  *       properties:
  *         headquartersId:
  *           type: integer
@@ -14,6 +16,12 @@
  *         name:
  *           type: string
  *           description: The name of the headquarters
+ *         description:
+ *           type: string
+ *           description: Additional details about the headquarters
+ *         contactPerson:
+ *           type: string
+ *           description: Name of the primary contact person
  *         address:
  *           type: string
  *           description: Main office address of the headquarters
@@ -24,9 +32,6 @@
  *           type: string
  *           format: email
  *           description: Contact email for the headquarters
- *         description:
- *           type: string
- *           description: Additional details about the headquarters
  */
 export interface Headquarters {
     headquartersId: number;
