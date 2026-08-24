@@ -25,14 +25,14 @@ Internal working report from Microsoft 365, public Slack, and GitHub signals gat
 | Priority | PR | Current status | Release action |
 |---|---|---|---|
 | P0 | `github/github-app#12271` - Reap idle CLIs under Windows commit pressure | Checks pass; merge state is conflicting; review required; linked to Windows commit-pressure issue work. | Resolve conflicts/rebase, rerun validation, request review, then update related Windows issue(s). |
-| P0 | `github/copilot-agent-runtime#15540` - Runtime: Add OTel charge code attribution | Checks pass; mergeability is currently unknown; review required; POC framing still needs clarity. | Refresh mergeability, confirm POC vs. production intent, then request runtime owner review. |
-| P0 | `github/otel-billcode#85` - Add organization usage reporting | Clean and green as of the latest refresh; no approval yet. | Request review/approval and treat as the clean main-base PR in the OTEL release path. |
+| P0 | `github/copilot-agent-runtime#15540` - Runtime: Add OTel charge code attribution | Checks pass; merge state is conflicting; review required; POC framing still needs clarity. | Resolve conflicts, confirm POC vs. production intent, then request runtime owner review. |
+| P0 | `github/otel-billcode#85` - Add organization usage reporting | Merged on Aug. 24. | Use as the now-landed base for the remaining organization-reporting stack. |
 | P0 | `github/otel-billcode#83` - Add replay-safe operational usage metrics | Mergeable and green; no approval yet. | Request review/approval, then use it as the base for #84. |
 | P0 | `github/otel-billcode#80` - Retain exported traces with pinned Tempo | Mergeable, but Node 20 `test` is failing while newer Node checks pass. | Fix the Node 20 failure before review/merge. |
-| P0 | `github/otel-billcode#84` - Add durable content-free OTLP events | Checks pass, but merge state is conflicting; stacked on #83. | Resolve conflicts/restack after #83 finalizes, then rerun validation. |
-| P0 | `github/otel-billcode#86` - Authorize shared organization reporting | Checks pass, but merge state is conflicting; stacked on #85. | Resolve conflicts/restack after #85 finalizes, then rerun validation. |
-| P0 | `github/otel-billcode#87` - Add authorized Fleet session explorer | Mergeable, but `supply-chain` and `schema-immutability` checks fail. | Fix those two checks before review/merge; then sequence after #86. |
-| P0 | `github/GitHub-Copilot-for-Jenkins#65` - Make Copilot audit outcomes durable | New PR opened from issue #60; mergeable; some checks are still pending. | Let pending checks finish, then continue the P1 productionization slices after P0 preview blockers. |
+| P0 | `github/otel-billcode#84` - Add durable content-free OTLP events | Mergeable, but Windows check is failing and `demo-bank` is still in progress. | Fix Windows failure and let pending check finish before review/merge. |
+| P0 | `github/otel-billcode#86` - Authorize shared organization reporting | Merge state is conflicting after #85 landed; `demo-bank` and `observability-stack` are still in progress. | Restack on merged #85, rerun validation, then proceed after pending checks clear. |
+| P0 | `github/otel-billcode#87` - Add authorized Fleet session explorer | Merge state is conflicting after upstream stack movement; checks are otherwise green in latest snapshot. | Restack after #86 is conflict-free and green. |
+| P0 | `github/GitHub-Copilot-for-Jenkins#65` - Make Copilot audit outcomes durable | New PR opened from issue #60; mergeable and checks pass. | Continue the P1 productionization slices after P0 preview blockers. |
 | P1 | `github/github-app#10304` - Add CLI extension slash commands to app composers | Draft; dirty; review required. | Either revive and take out of draft with an owner, or close if superseded. |
 | P1 | Older GitHub App PRs `#8044`, `#8022`, `#7976`, `#7954`, `#7949`, `#7754` | Mostly stale/dirty/review-required. | Decide revive vs. close so they stop obscuring the active release queue. |
 
@@ -48,16 +48,16 @@ Internal working report from Microsoft 365, public Slack, and GitHub signals gat
 | P0 | `github/GitHub-Copilot-for-Jenkins#54` | Controlled design-partner pilot is the evidence loop for preview. | Pair with one exact compatibility profile in #55. |
 | P0 | `github/GitHub-Copilot-for-Jenkins#55` | Prevents overbroad customer-preview claims. | Define exact Jenkins/core/plugin/platform compatibility matrix. |
 | P0 | `github/GitHub-Copilot-for-Jenkins#46-#49` | Diagnostics, bounded prompt/metering, audit, and setup are required to make preview supportable. | Close as customer-preview blockers before P1 productionization. |
-| P1 | `Norman-Norman-Norman/future-of-pm#109` | High-priority analytics dashboard MVP in this repo. | MVP implemented locally with API/frontend tests and builds passing; open PR after final review. |
+| P1 | `Norman-Norman-Norman/future-of-pm#109` | High-priority analytics dashboard MVP in this repo. | Closed by merged PR `Norman-Norman-Norman/future-of-pm#110`. |
 
 ## Release sequencing recommendation
 
 1. CodeQL workflow failures were mitigated by disabling the CodeQL workflow in the three affected repos after Code Security enablement was blocked by policy.
 2. Resolve `github/github-app#12271` and use it to move Windows commit-pressure issues forward.
-3. Refresh `github/copilot-agent-runtime#15540` mergeability and align it with `github/copilot-agent-runtime#15521`.
-4. Clear the OTEL bill-code stack in order: #85 and #83 are clean review candidates; #80 needs Node 20 repair; #84 waits on #83 and needs conflict repair; #86 waits on #85 and needs conflict repair; #87 waits on #86 and needs supply-chain/schema fixes.
-5. For Jenkins, close P0 preview blockers before starting P1 productionization or release-candidate work.
-6. Open the `future-of-pm#109` analytics MVP PR, then convert stale/draft PRs into either active owner-backed work or closures.
+3. Resolve `github/copilot-agent-runtime#15540` conflicts and align it with `github/copilot-agent-runtime#15521`.
+4. Clear the OTEL bill-code stack in order: #85 is merged; #83 is a clean review candidate; #80 needs Node 20 repair; #84 needs Windows repair; #86 and #87 need restacking after upstream changes.
+5. For Jenkins, keep #65 moving, but close P0 preview blockers before broader P1 productionization or release-candidate work.
+6. Convert stale/draft PRs into either active owner-backed work or closures.
 
 ## Notes and limits
 
