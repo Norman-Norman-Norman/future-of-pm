@@ -28,6 +28,9 @@
  *         stockLevel:
  *           type: integer
  *           description: Current stock level of the product
+ *         reorderPoint:
+ *           type: integer
+ *           description: Stock threshold at or below which replenishment is recommended
  *         discount:
  *           type: number
  *           format: float
@@ -42,5 +45,7 @@ export interface Product {
     sku: string;
     unit: string;
     imgName: string;
+    stockLevel: number;
+    reorderPoint: number;
     discount?: number;
 }

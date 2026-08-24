@@ -101,26 +101,28 @@
 
 import express from 'express';
 import { OrderDetail } from '../models/orderDetail';
-import { orderDetails as seedOrderDetails } from '../seedData';
+import { orderDetailStore, resetOrderDetails } from '../dataStore';
 import { logger } from '../logger';
 
 const TAG = 'OrderDetails';
 const router = express.Router();
 
-let orderDetails: OrderDetail[] = [...seedOrderDetails];
-logger.seed('orderDetails', orderDetails.length);
+logger.seed('orderDetails', orderDetailStore.all().length);
+
+export { resetOrderDetails };
 
 // Create a new order detail
 router.post('/', (req, res) => {
   logger.route(TAG, 'POST / - Creating new order detail', { body: req.body });
   const newOrderDetail: OrderDetail = req.body;
-  orderDetails.push(newOrderDetail);
-  logger.info(TAG, `Order detail created`, { orderDetailId: newOrderDetail.orderDetailId, totalOrderDetails: orderDetails.length });
+  orderDetailStore.add(newOrderDetail);
+  logger.info(TAG, `Order detail created`, { orderDetailId: newOrderDetail.orderDetailId, totalOrderDetails: orderDetailStore.all().length });
   res.status(201).json(newOrderDetail);
 });
 
 // Get all order details
 router.get('/', (req, res) => {
+  const orderDetails = orderDetailStore.all();
   logger.route(TAG, `GET / - Returning all order details (${orderDetails.length} records)`);
   res.json(orderDetails);
 });
@@ -129,7 +131,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `GET /${id} - Looking up order detail`);
-  const orderDetail = orderDetails.find(od => od.orderDetailId === parseInt(id));
+  const orderDetail = orderDetailStore.findById(parseInt(id));
   if (orderDetail) {
     logger.debug(TAG, `Found order detail: id=${id}`);
     res.json(orderDetail);
@@ -143,11 +145,10 @@ router.get('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating order detail`, { body: req.body });
-  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(id));
-  if (index !== -1) {
-    orderDetails[index] = req.body;
+  const orderDetail = orderDetailStore.replace(parseInt(id), req.body);
+  if (orderDetail) {
     logger.info(TAG, `Order detail updated: id=${id}`);
-    res.json(orderDetails[index]);
+    res.json(orderDetail);
   } else {
     logger.warn(TAG, `Order detail not found for update: id=${id}`);
     res.status(404).send('Order detail not found');
@@ -158,10 +159,9 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `DELETE /${id} - Deleting order detail`);
-  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(id));
-  if (index !== -1) {
-    orderDetails.splice(index, 1);
-    logger.info(TAG, `Order detail deleted: id=${id}`, { remainingOrderDetails: orderDetails.length });
+  const deleted = orderDetailStore.remove(parseInt(id));
+  if (deleted) {
+    logger.info(TAG, `Order detail deleted: id=${id}`, { remainingOrderDetails: orderDetailStore.all().length });
     res.status(204).send();
   } else {
     logger.warn(TAG, `Order detail not found for deletion: id=${id}`);

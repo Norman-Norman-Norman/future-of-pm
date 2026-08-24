@@ -34,7 +34,10 @@
 export interface Delivery {
     deliveryId: number;
     supplierId: number;
+    orderId?: number;
     deliveryDate: string;
+    scheduledDate: string;
+    actualDeliveryDate?: string;
     name: string;
     description: string;
     status: string;

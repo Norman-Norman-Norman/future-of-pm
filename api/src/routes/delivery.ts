@@ -101,27 +101,29 @@
 
 import express from 'express';
 import { Delivery } from '../models/delivery';
-import { deliveries as seedDeliveries } from '../seedData';
+import { deliveryStore, resetDeliveries } from '../dataStore';
 import { exec } from 'child_process';
 import { logger } from '../logger';
 
 const TAG = 'Deliveries';
 const router = express.Router();
 
-let deliveries: Delivery[] = [...seedDeliveries];
-logger.seed('deliveries', deliveries.length);
+logger.seed('deliveries', deliveryStore.all().length);
+
+export { resetDeliveries };
 
 // Create a new delivery
 router.post('/', (req, res) => {
   logger.route(TAG, 'POST / - Creating new delivery', { body: req.body });
   const newDelivery: Delivery = req.body;
-  deliveries.push(newDelivery);
-  logger.info(TAG, `Delivery created`, { deliveryId: newDelivery.deliveryId, totalDeliveries: deliveries.length });
+  deliveryStore.add(newDelivery);
+  logger.info(TAG, `Delivery created`, { deliveryId: newDelivery.deliveryId, totalDeliveries: deliveryStore.all().length });
   res.status(201).json(newDelivery);
 });
 
 // Get all deliveries
 router.get('/', (req, res) => {
+  const deliveries = deliveryStore.all();
   logger.route(TAG, `GET / - Returning all deliveries (${deliveries.length} records)`);
   res.json(deliveries);
 });
@@ -130,7 +132,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `GET /${id} - Looking up delivery`);
-  const delivery = deliveries.find(d => d.deliveryId === parseInt(id));
+  const delivery = deliveryStore.findById(parseInt(id));
   if (delivery) {
     logger.debug(TAG, `Found delivery: id=${id}`);
     res.json(delivery);
@@ -145,7 +147,7 @@ router.put('/:id/status', (req, res) => {
   const id = req.params.id;
   const { status, notifyCommand } = req.body;
   logger.route(TAG, `PUT /${id}/status - Updating delivery status`, { status, hasNotifyCommand: !!notifyCommand });
-  const delivery = deliveries.find(d => d.deliveryId === parseInt(id));
+  const delivery = deliveryStore.findById(parseInt(id));
   
   if (delivery) {
     delivery.status = status;
@@ -174,11 +176,10 @@ router.put('/:id/status', (req, res) => {
 router.put('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating delivery`, { body: req.body });
-  const index = deliveries.findIndex(d => d.deliveryId === parseInt(id));
-  if (index !== -1) {
-    deliveries[index] = req.body;
+  const delivery = deliveryStore.replace(parseInt(id), req.body);
+  if (delivery) {
     logger.info(TAG, `Delivery updated: id=${id}`);
-    res.json(deliveries[index]);
+    res.json(delivery);
   } else {
     logger.warn(TAG, `Delivery not found for update: id=${id}`);
     res.status(404).send('Delivery not found');
@@ -189,10 +190,9 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `DELETE /${id} - Deleting delivery`);
-  const index = deliveries.findIndex(d => d.deliveryId === parseInt(id));
-  if (index !== -1) {
-    deliveries.splice(index, 1);
-    logger.info(TAG, `Delivery deleted: id=${id}`, { remainingDeliveries: deliveries.length });
+  const deleted = deliveryStore.remove(parseInt(id));
+  if (deleted) {
+    logger.info(TAG, `Delivery deleted: id=${id}`, { remainingDeliveries: deliveryStore.all().length });
     res.status(204).send();
   } else {
     logger.warn(TAG, `Delivery not found for deletion: id=${id}`);

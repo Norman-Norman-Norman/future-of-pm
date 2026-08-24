@@ -4,10 +4,7 @@ import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
-<<<<<<< HEAD
-=======
 import { frontendLogger } from '../../../logger';
->>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
 
 interface Product {
   productId: number;
@@ -38,8 +35,6 @@ export default function Products() {
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
   const { addToCart } = useCart();
-<<<<<<< HEAD
-=======
 
   useEffect(() => {
     frontendLogger.componentMount('Products');
@@ -54,7 +49,6 @@ export default function Products() {
       frontendLogger.error('Products', 'Failed to fetch products', error);
     }
   }, [products, error]);
->>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
 
   const filteredProducts = products?.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,10 +70,7 @@ export default function Products() {
       const effectivePrice = product.discount
         ? product.price * (1 - product.discount)
         : product.price;
-<<<<<<< HEAD
-=======
       frontendLogger.userAction('Add to cart from Products page', { productId: product.productId, name: product.name, quantity, effectivePrice });
->>>>>>> cb700de (feat(frontend): add shopping cart, checkout, landing page, and frontend logging)
       addToCart(
         { productId: product.productId, name: product.name, price: effectivePrice, imgName: product.imgName },
         quantity

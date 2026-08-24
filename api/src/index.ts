@@ -12,6 +12,7 @@ import orderRoutes from './routes/order';
 import branchRoutes from './routes/branch';
 import headquartersRoutes from './routes/headquarters';
 import supplierRoutes from './routes/supplier';
+import analyticsRoutes from './routes/analytics';
 import { logger } from './logger';
 import { requestLogger } from './middleware/requestLogger';
 
@@ -102,6 +103,9 @@ logger.lifecycle('Registered route: /api/headquarters');
 
 app.use('/api/suppliers', supplierRoutes);
 logger.lifecycle('Registered route: /api/suppliers');
+
+app.use('/api/analytics', analyticsRoutes);
+logger.lifecycle('Registered route: /api/analytics');
 
 app.get('/', (req, res) => {
   logger.route('root', 'GET / - health check');
