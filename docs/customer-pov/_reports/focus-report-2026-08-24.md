@@ -24,14 +24,14 @@ Internal working report from Microsoft 365, public Slack, and GitHub signals gat
 
 | Priority | PR | Current status | Release action |
 |---|---|---|---|
-| P0 | `github/github-app#12271` - Reap idle CLIs under Windows commit pressure | Checks pass; merge state is conflicting; review required; linked to Windows commit-pressure issue work. | Resolve conflicts/rebase, rerun validation, request review, then update related Windows issue(s). |
+| P0 | `github/github-app#12271` - Reap idle CLIs under Windows commit pressure | Open; mergeable and checks pass after rerun; review required; linked to Windows commit-pressure issue work. | Request/review approval, then merge and update related Windows issue(s). |
 | P0 | `github/copilot-agent-runtime#15540` - Runtime: Add OTel charge code attribution | Checks pass; merge state is conflicting; review required; POC framing still needs clarity. | Resolve conflicts, confirm POC vs. production intent, then request runtime owner review. |
 | P0 | `github/otel-billcode#85` - Add organization usage reporting | Merged on Aug. 24. | Use as the now-landed base for the remaining organization-reporting stack. |
 | P0 | `github/otel-billcode#83` - Add replay-safe operational usage metrics | Merged on Aug. 24. | Use as the now-landed base for durable event work. |
-| P0 | `github/otel-billcode#80` - Retain exported traces with pinned Tempo | Open; merge state is conflicting; `test (22)` is failing. | Resolve conflicts and fix the Node 22 failure before review/merge. |
-| P0 | `github/otel-billcode#84` - Add durable content-free OTLP events | Open; merge state is conflicting and `observability-shared` is failing. | Resolve conflicts and fix `observability-shared`, then re-evaluate. |
+| P0 | `github/otel-billcode#80` - Retain exported traces with pinned Tempo | Merged on Aug. 24. | No remaining release action. |
+| P0 | `github/otel-billcode#84` - Add durable content-free OTLP events | Merged on Aug. 24. | No remaining release action. |
 | P0 | `github/otel-billcode#86` - Authorize shared organization reporting | Merged on Aug. 24. | Use as the now-landed authorization base for Fleet work. |
-| P0 | `github/otel-billcode#87` - Add authorized Fleet session explorer | Merged on Aug. 24. | Confirm downstream deploy/release expectations if #80 remains a declared dependency in historical PR text. |
+| P0 | `github/otel-billcode#87` - Add authorized Fleet session explorer | Merged on Aug. 24. | No remaining release action. |
 | P0 | `github/GitHub-Copilot-for-Jenkins#65` - Make Copilot audit outcomes durable | Merged on Aug. 24. | Continue the P1 productionization slices after P0 preview blockers. |
 | P1 | `github/github-app#10304` - Add CLI extension slash commands to app composers | Draft; dirty; review required. | Either revive and take out of draft with an owner, or close if superseded. |
 | P1 | Older GitHub App PRs `#8044`, `#8022`, `#7976`, `#7954`, `#7949`, `#7754` | Mostly stale/dirty/review-required. | Decide revive vs. close so they stop obscuring the active release queue. |
@@ -55,7 +55,7 @@ Internal working report from Microsoft 365, public Slack, and GitHub signals gat
 1. CodeQL workflow failures were mitigated by disabling the CodeQL workflow in the three affected repos after Code Security enablement was blocked by policy.
 2. Resolve `github/github-app#12271` and use it to move Windows commit-pressure issues forward.
 3. Resolve `github/copilot-agent-runtime#15540` conflicts and align it with `github/copilot-agent-runtime#15521`.
-4. Clear the OTEL bill-code stack in order: #83, #85, #86, and #87 are merged; #80 needs conflict and Node 22 repair; #84 needs conflict and `observability-shared` repair.
+4. OTEL bill-code release stack is now merged: #80, #83, #84, #85, #86, and #87.
 5. For Jenkins, #65 is merged; continue the remaining productionization slices only after P0 preview blockers stay under control.
 6. Convert stale/draft PRs into either active owner-backed work or closures.
 
