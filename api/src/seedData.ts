@@ -45,7 +45,9 @@ export const products: Product[] = [
         price: 72.99,
         sku: "GHCP-HAT-001",
         unit: "piece",
-        imgName: "GHCP_ChefsHat.png"
+        imgName: "GHCP_ChefsHat.png",
+        stockLevel: 4,
+        reorderPoint: 10
     },
     {
         productId: 1,
@@ -56,6 +58,8 @@ export const products: Product[] = [
         sku: "CAT-FEED-001",
         unit: "piece",
         imgName: "feeder.png",
+        stockLevel: 18,
+        reorderPoint: 8,
         discount: 0.25
     },
     {
@@ -67,6 +71,8 @@ export const products: Product[] = [
         sku: "CAT-LITTER-001",
         unit: "piece",
         imgName: "litter-box.png",
+        stockLevel: 7,
+        reorderPoint: 7,
         discount: 0.25
     },
     {
@@ -77,7 +83,9 @@ export const products: Product[] = [
         price: 89.99,
         sku: "CAT-FLIX-001",
         unit: "piece",
-        imgName: "catflix.png"
+        imgName: "catflix.png",
+        stockLevel: 26,
+        reorderPoint: 10
     },
     {
         productId: 4,
@@ -87,7 +95,9 @@ export const products: Product[] = [
         price: 79.99,
         sku: "CAT-COLLAR-001",
         unit: "piece",
-        imgName: "smart-collar.png"
+        imgName: "smart-collar.png",
+        stockLevel: 12,
+        reorderPoint: 12
     },
     {
         productId: 5,
@@ -97,7 +107,9 @@ export const products: Product[] = [
         price: 149.99,
         sku: "CAT-BED-001",
         unit: "piece",
-        imgName: "sleep-nest.png"
+        imgName: "sleep-nest.png",
+        stockLevel: 21,
+        reorderPoint: 9
     },
     {
         productId: 6,
@@ -107,7 +119,9 @@ export const products: Product[] = [
         price: 119.99,
         sku: "CAT-GROOM-001",
         unit: "piece",
-        imgName: "auto-groomer.png"
+        imgName: "auto-groomer.png",
+        stockLevel: 15,
+        reorderPoint: 8
     },
     {
         productId: 7,
@@ -118,6 +132,8 @@ export const products: Product[] = [
         sku: "CAT-FOUNTAIN-001",
         unit: "piece",
         imgName: "smart-fountain.png",
+        stockLevel: 3,
+        reorderPoint: 9,
         discount: 0.25
     },
     {
@@ -128,7 +144,9 @@ export const products: Product[] = [
         price: 59.99,
         sku: "CAT-SCRATCH-001",
         unit: "piece",
-        imgName: "scratch-pad.png"
+        imgName: "scratch-pad.png",
+        stockLevel: 33,
+        reorderPoint: 15
     },
     {
         productId: 9,
@@ -138,7 +156,9 @@ export const products: Product[] = [
         price: 99.99,
         sku: "CAT-CAM-001",
         unit: "piece",
-        imgName: "chirp-cam.png"
+        imgName: "chirp-cam.png",
+        stockLevel: 17,
+        reorderPoint: 10
     },
     {
         productId: 10,
@@ -149,6 +169,8 @@ export const products: Product[] = [
         sku: "CAT-SNACK-001",
         unit: "piece",
         imgName: "snack-vault.png",
+        stockLevel: 6,
+        reorderPoint: 11,
         discount: 0.25
     },
     {
@@ -159,7 +181,9 @@ export const products: Product[] = [
         price: 159.99,
         sku: "CAT-DOOR-001",
         unit: "piece",
-        imgName: "door-dash.png"
+        imgName: "door-dash.png",
+        stockLevel: 14,
+        reorderPoint: 6
     },
     {
         productId: 12,
@@ -169,7 +193,9 @@ export const products: Product[] = [
         price: 79.99,
         sku: "CAT-TRACKER-001",
         unit: "piece",
-        imgName: "tracker-mat.png"
+        imgName: "tracker-mat.png",
+        stockLevel: 28,
+        reorderPoint: 10
     }
 ];
 
@@ -223,10 +249,18 @@ export const orders: Order[] = [
     {
         orderId: 2,
         branchId: 2,
-        orderDate: new Date().toISOString(),
+        orderDate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         name: "Cat Enrichment Bundle",
         description: "Monthly cat entertainment systems restock",
         status: "processing"
+    },
+    {
+        orderId: 3,
+        branchId: 1,
+        orderDate: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+        name: "Cancelled Grooming Pilot",
+        description: "Cancelled grooming hardware pilot",
+        status: "cancelled"
     }
 ];
 
@@ -255,6 +289,14 @@ export const orderDetails: OrderDetail[] = [
         quantity: 20,
         unitPrice: 79.99,
         notes: "PawTrack Smart Collars for adoption events"
+    },
+    {
+        orderDetailId: 4,
+        orderId: 3,
+        productId: 6,
+        quantity: 2,
+        unitPrice: 119.99,
+        notes: "Cancelled pilot line item"
     }
 ];
 
@@ -263,7 +305,9 @@ export const deliveries: Delivery[] = [
     {
         deliveryId: 1,
         supplierId: 1,
+        orderId: 1,
         deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         name: "PurrTech Smart Home Bundle",
         description: "Premium cat tech products delivery for smart cat homes",
         status: "pending"
@@ -271,10 +315,34 @@ export const deliveries: Delivery[] = [
     {
         deliveryId: 2,
         supplierId: 2,
+        orderId: 2,
         deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
+        scheduledDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
         name: "WhiskerWare Entertainment Package",
         description: "Entertainment and tracking systems for feline companions",
         status: "in-transit"
+    },
+    {
+        deliveryId: 3,
+        supplierId: 3,
+        orderId: 1,
+        deliveryDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        scheduledDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        actualDeliveryDate: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
+        name: "CatNip Early Replenishment",
+        description: "Delivered early for the quarterly refresh",
+        status: "delivered"
+    },
+    {
+        deliveryId: 4,
+        supplierId: 2,
+        orderId: 2,
+        deliveryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        scheduledDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        actualDeliveryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        name: "WhiskerWare Late Collar Shipment",
+        description: "Delivered one day after schedule",
+        status: "delivered"
     }
 ];
 
