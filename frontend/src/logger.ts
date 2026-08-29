@@ -20,9 +20,9 @@ function log(level: LogLevel, tag: string, message: string, data?: unknown): voi
   const prefix = `[OCTOCAT] [${level}] ${timestamp} [${tag}]`;
 
   if (data !== undefined) {
-    console.log(`%c${prefix}%c ${message}`, LEVEL_STYLES[level], '', data);
+    console.log('%c%s%c %s', LEVEL_STYLES[level], prefix, '', message, data);
   } else {
-    console.log(`%c${prefix}%c ${message}`, LEVEL_STYLES[level], '');
+    console.log('%c%s%c %s', LEVEL_STYLES[level], prefix, '', message);
   }
 }
 

@@ -24,9 +24,9 @@ function log(level: LogLevel, tag: string, message: string, data?: unknown): voi
   const prefix = `${color}[${level}]${RESET} ${timestamp} [${tag}]`;
 
   if (data !== undefined) {
-    console.log(`${prefix} ${message}`, typeof data === 'object' ? JSON.stringify(data, null, 2) : data);
+    console.log('%s %s', prefix, message, typeof data === 'object' ? JSON.stringify(data, null, 2) : data);
   } else {
-    console.log(`${prefix} ${message}`);
+    console.log('%s %s', prefix, message);
   }
 }
 

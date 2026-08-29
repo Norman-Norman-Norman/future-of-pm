@@ -5,6 +5,7 @@ import Welcome from './components/Welcome';
 import About from './components/About';
 import Footer from './components/Footer';
 import Products from './components/entity/product/Products';
+import ProductDetail from './components/entity/product/ProductDetail';
 import Login from './components/Login';
 import LandingPage from './components/LandingPage';
 import Dashboard from './components/Dashboard';
@@ -47,6 +48,7 @@ function ThemedApp() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
