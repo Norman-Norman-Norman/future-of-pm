@@ -35,7 +35,101 @@
  *           type: number
  *           format: float
  *           description: Discount percentage (if applicable) expressed as a decimal (e.g., 0.25 for 25%)
+ *         category:
+ *           type: string
+ *           description: Merchandising category for product discovery and related-product grouping
+ *         images:
+ *           type: array
+ *           description: Accessible product image gallery entries
+ *           items:
+ *             $ref: '#/components/schemas/ProductImage'
+ *         specifications:
+ *           type: array
+ *           description: Optional buyer-facing product specifications
+ *           items:
+ *             $ref: '#/components/schemas/ProductSpecification'
+ *     ProductImage:
+ *       type: object
+ *       required:
+ *         - url
+ *         - alt
+ *       properties:
+ *         url:
+ *           type: string
+ *         alt:
+ *           type: string
+ *         isPrimary:
+ *           type: boolean
+ *     ProductSpecification:
+ *       type: object
+ *       required:
+ *         - label
+ *         - value
+ *       properties:
+ *         label:
+ *           type: string
+ *         value:
+ *           type: string
+ *     ProductReviewSummary:
+ *       type: object
+ *       required:
+ *         - averageRating
+ *         - reviewCount
+ *         - ratingCounts
+ *       properties:
+ *         averageRating:
+ *           type: number
+ *           format: float
+ *         reviewCount:
+ *           type: integer
+ *         ratingCounts:
+ *           type: object
+ *           properties:
+ *             one:
+ *               type: integer
+ *             two:
+ *               type: integer
+ *             three:
+ *               type: integer
+ *             four:
+ *               type: integer
+ *             five:
+ *               type: integer
+ *     ProductDetail:
+ *       allOf:
+ *         - $ref: '#/components/schemas/Product'
+ *         - type: object
+ *           required:
+ *             - images
+ *             - specifications
+ *             - reviewSummary
+ *           properties:
+ *             reviewSummary:
+ *               $ref: '#/components/schemas/ProductReviewSummary'
  */
+export interface ProductImage {
+    url: string;
+    alt: string;
+    isPrimary?: boolean;
+}
+
+export interface ProductSpecification {
+    label: string;
+    value: string;
+}
+
+export interface ProductReviewSummary {
+    averageRating: number;
+    reviewCount: number;
+    ratingCounts: {
+        one: number;
+        two: number;
+        three: number;
+        four: number;
+        five: number;
+    };
+}
+
 export interface Product {
     productId: number;
     supplierId: number;
@@ -48,4 +142,13 @@ export interface Product {
     stockLevel: number;
     reorderPoint: number;
     discount?: number;
+    category?: string;
+    images?: ProductImage[];
+    specifications?: ProductSpecification[];
+}
+
+export interface ProductDetail extends Product {
+    images: ProductImage[];
+    specifications: ProductSpecification[];
+    reviewSummary: ProductReviewSummary;
 }

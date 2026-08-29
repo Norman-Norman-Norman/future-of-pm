@@ -1,36 +1,15 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useQuery } from 'react-query';
-import { api } from '../../../api/config';
+import { Link } from 'react-router-dom';
+import { fetchProducts } from '../../../api/products';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
 import { frontendLogger } from '../../../logger';
-
-interface Product {
-  productId: number;
-  name: string;
-  description: string;
-  price: number;
-  imgName: string;
-  sku: string;
-  unit: string;
-  supplierId: number;
-  discount?: number;
-}
-
-const fetchProducts = async (): Promise<Product[]> => {
-  const url = `${api.baseURL}${api.endpoints.products}`;
-  frontendLogger.apiRequest('GET', url);
-  const { data } = await axios.get(url);
-  frontendLogger.apiResponse('GET', url, 200, { count: data.length });
-  return data;
-};
+import { Product } from '../../../types/product';
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showModal, setShowModal] = useState(false);
   const [showPromo, setShowPromo] = useState(true);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
@@ -83,9 +62,7 @@ export default function Products() {
   };
 
   const handleProductClick = (product: Product) => {
-    frontendLogger.userAction('Product detail clicked', { productId: product.productId, name: product.name });
-    setSelectedProduct(product);
-    setShowModal(true);
+    frontendLogger.userAction('Product detail link clicked', { productId: product.productId, name: product.name });
   };
 
   if (isLoading) {
@@ -93,7 +70,7 @@ export default function Products() {
       <div className={`min-h-screen ${darkMode ? 'bg-dark' : 'bg-gray-100'} pt-20 px-4 transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+            <div className="animate-spin h-24 w-24 border-4 border-gray-200 border-t-primary"></div>
           </div>
         </div>
       </div>
@@ -140,10 +117,12 @@ export default function Products() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts?.map(product => (
-              <div key={product.productId} className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(118,184,82,0.3)] flex flex-col`}>
-                <div 
-                  className={`relative h-56 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} transition-colors duration-300 cursor-pointer`}
+              <article key={product.productId} className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg overflow-hidden shadow-lg transform motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-105 hover:shadow-[0_0_25px_rgba(118,184,82,0.3)] flex flex-col`}>
+                <Link
+                  to={`/products/${product.productId}`}
+                  className={`relative h-56 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} transition-colors duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary block`}
                   onClick={() => handleProductClick(product)}
+                  aria-label={`View details for ${product.name}`}
                 >
                   <img 
                     src={`/${product.imgName}`} 
@@ -155,10 +134,18 @@ export default function Products() {
                       {Math.round(product.discount * 100)}% OFF
                     </div>
                   )}
-                </div>
-                
+                </Link>
+                 
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}>{product.name}</h3>
+                  <h3 className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}>
+                    <Link
+                      to={`/products/${product.productId}`}
+                      onClick={() => handleProductClick(product)}
+                      className="hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                    >
+                      {product.name}
+                    </Link>
+                  </h3>
                   <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 flex-grow transition-colors duration-300`}>{product.description}</p>
                   <div className="space-y-4 mt-auto">
                     <div className="flex justify-between items-center">
@@ -172,11 +159,11 @@ export default function Products() {
                       )}
                     </div>
                     
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className={`flex items-center space-x-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-lg p-1 transition-colors duration-300`}>
                         <button 
                           onClick={() => handleQuantityChange(product.productId, -1)}
-                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
+                          className={`min-h-11 min-w-11 flex items-center justify-center rounded-md ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors duration-300`}
                           aria-label={`Decrease quantity of ${product.name}`}
                           id={`decrease-qty-${product.productId}`}
                         >
@@ -191,7 +178,7 @@ export default function Products() {
                         </span>
                         <button 
                           onClick={() => handleQuantityChange(product.productId, 1)}
-                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
+                          className={`min-h-11 min-w-11 flex items-center justify-center rounded-md ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors duration-300`}
                           aria-label={`Increase quantity of ${product.name}`}
                           id={`increase-qty-${product.productId}`}
                         >
@@ -200,7 +187,7 @@ export default function Products() {
                       </div>
                       <button 
                         onClick={() => handleAddToCart(product)}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
+                        className={`min-h-11 px-4 py-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors ${
                           quantities[product.productId] 
                             ? 'bg-primary hover:bg-accent text-white' 
                             : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
@@ -209,50 +196,24 @@ export default function Products() {
                         aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
                         id={`add-to-cart-${product.productId}`}
                       >
-                        Add to Cart
-                      </button>
+                       Add to Cart
+                     </button>
+                     <Link
+                       to={`/products/${product.productId}`}
+                       onClick={() => handleProductClick(product)}
+                       className="min-h-11 inline-flex items-center px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                       aria-label={`View details for ${product.name}`}
+                     >
+                       Details
+                     </Link>
                     </div>
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Product Modal */}
-      {showModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowModal(false)}>
-          <div 
-            className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl transition-colors duration-300`}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex justify-end">
-              <button 
-                onClick={() => setShowModal(false)}
-                className={`${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-300`}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className={`${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} rounded-lg mb-6 p-4`}>
-              <img 
-                src={`/${selectedProduct.imgName}`} 
-                alt={selectedProduct.name}
-                className="w-full h-auto object-contain max-h-[400px]"
-              />
-            </div>
-            <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
-              {selectedProduct.name}
-            </h2>
-            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-lg transition-colors duration-300`}>
-              {selectedProduct.description}
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Promo Popup - Chef's Hat Sale */}
       {showPromo && (

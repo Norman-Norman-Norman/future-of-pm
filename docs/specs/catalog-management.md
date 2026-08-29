@@ -4,7 +4,7 @@
 |-------|-------|
 | Status | Existing + Major Enhancements Planned |
 | Last Updated | March 10, 2026 |
-| GitHub Issues | #36, #41, #42, #47 |
+| GitHub Issues | #36, #41, #42, #47, #107, #111 |
 | RICE Score | 9.0 (highest sub-feature) |
 
 ## Overview
@@ -16,7 +16,9 @@ Catalog Management covers the product catalog, supplier relationships, product d
 | Method | Route | File | Description |
 |--------|-------|------|-------------|
 | GET | /api/products | `api/src/routes/product.ts` | Returns all products |
-| GET | /api/products/:id | `api/src/routes/product.ts` | Get product by productId |
+| GET | /api/products/:id | `api/src/routes/product.ts` | Get product by productId with detail-page data |
+| GET | /api/products/:id/reviews | `api/src/routes/product.ts` | Returns read-only seeded reviews for a product |
+| GET | /api/products/:id/related | `api/src/routes/product.ts` | Returns deterministic related products |
 | POST | /api/products | `api/src/routes/product.ts` | Create product |
 | PUT | /api/products/:id | `api/src/routes/product.ts` | Replace product |
 | DELETE | /api/products/:id | `api/src/routes/product.ts` | Delete product |
@@ -29,13 +31,15 @@ Catalog Management covers the product catalog, supplier relationships, product d
 ### Data Models
 | Model | File | Fields | Relationships |
 |-------|------|--------|---------------|
-| Product | `api/src/models/product.ts` | productId, supplierId, name, description, price, sku, unit, imgName, discount? | belongs to Supplier |
+| Product | `api/src/models/product.ts` | productId, supplierId, name, description, price, sku, unit, imgName, discount?, category?, images?, specifications? | belongs to Supplier |
+| ProductReview | `api/src/models/productReview.ts` | reviewId, productId, reviewerName, rating, title, comment, createdAt, verifiedBuyer | belongs to Product |
 | Supplier | `api/src/models/supplier.ts` | supplierId, name, description, contactPerson, email, phone | has many Products |
 
 ### Frontend Components
 | Component | File | Description |
 |-----------|------|-------------|
-| Products | `frontend/src/components/entity/product/Products.tsx` | Product catalog grid with basic text search, quantity selectors, add-to-cart, product detail modal, promo popup |
+| Products | `frontend/src/components/entity/product/Products.tsx` | Product catalog grid with basic text search, quantity selectors, add-to-cart, routed product-detail links, promo popup |
+| ProductDetail | `frontend/src/components/entity/product/ProductDetail.tsx` | Accessible responsive product detail page with gallery, specs, reviews, related products, and cart actions |
 | ProductForm | `frontend/src/components/entity/product/ProductForm.tsx` | Modal form for creating/editing products (admin) |
 | AdminProducts | `frontend/src/components/admin/AdminProducts.tsx` | Admin product management table with sorting, edit/delete |
 

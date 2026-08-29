@@ -2,20 +2,27 @@ import {
   deliveries as seedDeliveries,
   orderDetails as seedOrderDetails,
   orders as seedOrders,
+  productReviews as seedProductReviews,
   products as seedProducts
 } from './seedData';
 import { Delivery } from './models/delivery';
 import { Order } from './models/order';
 import { OrderDetail } from './models/orderDetail';
 import { Product } from './models/product';
+import { ProductReview } from './models/productReview';
 
 let products: Product[] = [...seedProducts];
+let productReviews: ProductReview[] = [...seedProductReviews];
 let orders: Order[] = [...seedOrders];
 let orderDetails: OrderDetail[] = [...seedOrderDetails];
 let deliveries: Delivery[] = [...seedDeliveries];
 
 export const resetProducts = () => {
   products = [...seedProducts];
+};
+
+export const resetProductReviews = () => {
+  productReviews = [...seedProductReviews];
 };
 
 export const resetOrders = () => {
@@ -32,6 +39,7 @@ export const resetDeliveries = () => {
 
 export const resetAnalyticsState = () => {
   resetProducts();
+  resetProductReviews();
   resetOrders();
   resetOrderDetails();
   resetDeliveries();
@@ -52,6 +60,11 @@ export const productStore = {
     if (index === -1) return undefined;
     return products.splice(index, 1)[0];
   }
+};
+
+export const productReviewStore = {
+  all: () => productReviews,
+  findByProductId: (productId: number) => productReviews.filter(review => review.productId === productId)
 };
 
 export const orderStore = {
