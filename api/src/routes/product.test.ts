@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import productRouter, { resetProductReviews, resetProducts } from './product';
+import { products as seedProducts } from '../seedData';
 
 let app: express.Express;
 
@@ -12,6 +13,28 @@ describe('Product API', () => {
     app.use('/products', productRouter);
     resetProducts();
     resetProductReviews();
+  });
+
+  it('should create a new product', async () => {
+    const newProduct = {
+      ...seedProducts[0],
+      productId: 99,
+      name: 'New Product',
+      sku: 'NEW-PRODUCT-001'
+    };
+
+    const response = await request(app).post('/products').send(newProduct);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(newProduct);
+  });
+
+  it('should get all products', async () => {
+    const response = await request(app).get('/products');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(seedProducts.length);
+    expect(response.body).toEqual(seedProducts);
   });
 
   it('returns product detail with normalized images, specifications, and review summary', async () => {
@@ -29,11 +52,33 @@ describe('Product API', () => {
         ratingCounts: { one: 0, two: 0, three: 0, four: 1, five: 1 }
       }
     });
+
     expect(response.body.specifications).toEqual([
       { label: 'Capacity', value: '6 meal compartments' },
       { label: 'Connectivity', value: 'Wi-Fi app scheduling with offline fallback' },
       { label: 'Power', value: 'USB-C with 24-hour battery backup' }
     ]);
+  });
+
+  it('should update a product by ID', async () => {
+    const updatedProduct = {
+      ...seedProducts[0],
+      name: 'Updated Product'
+    };
+
+    const response = await request(app).put('/products/13').send(updatedProduct);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(updatedProduct);
+  });
+
+  it('should delete a product by ID', async () => {
+    const response = await request(app).delete('/products/13');
+
+    expect(response.status).toBe(204);
+
+    const deleted = await request(app).get('/products/13');
+    expect(deleted.status).toBe(404);
   });
 
   it('returns an empty review summary for products without reviews', async () => {
