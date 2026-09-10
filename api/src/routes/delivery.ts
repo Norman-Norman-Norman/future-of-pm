@@ -103,6 +103,7 @@ import express from 'express';
 import { Delivery } from '../models/delivery';
 import { deliveryStore, resetDeliveries } from '../dataStore';
 import { logger } from '../logger';
+import { DeliveryBodySchema, DeliveryStatusBodySchema, validateBody } from '../validation';
 
 const TAG = 'Deliveries';
 const router = express.Router();
@@ -112,7 +113,7 @@ logger.seed('deliveries', deliveryStore.all().length);
 export { resetDeliveries };
 
 // Create a new delivery
-router.post('/', (req, res) => {
+router.post('/', validateBody(DeliveryBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new delivery', { body: req.body });
   const newDelivery: Delivery = req.body;
   deliveryStore.add(newDelivery);
@@ -142,16 +143,10 @@ router.get('/:id', (req, res) => {
 });
 
 // Update delivery status
-router.put('/:id/status', (req, res) => {
+router.put('/:id/status', validateBody(DeliveryStatusBodySchema), (req, res) => {
   const id = req.params.id;
-  const { status, notifyCommand } = req.body;
-  logger.route(TAG, `PUT /${id}/status - Updating delivery status`, { status, hasNotifyCommand: !!notifyCommand });
-
-  if (notifyCommand !== undefined) {
-    logger.warn(TAG, `Rejected unsupported notify command for delivery id=${id}`);
-    res.status(400).json({ error: 'notifyCommand is not supported' });
-    return;
-  }
+  const { status } = req.body;
+  logger.route(TAG, `PUT /${id}/status - Updating delivery status`, { status });
 
   const delivery = deliveryStore.findById(parseInt(id));
   
@@ -166,7 +161,7 @@ router.put('/:id/status', (req, res) => {
 });
 
 // Update a delivery by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(DeliveryBodySchema), (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating delivery`, { body: req.body });
   const delivery = deliveryStore.replace(parseInt(id), req.body);

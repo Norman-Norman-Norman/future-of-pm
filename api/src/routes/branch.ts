@@ -103,6 +103,7 @@ import express from 'express';
 import { Branch } from '../models/branch';
 import { branches as seedBranches } from '../seedData';
 import { logger } from '../logger';
+import { BranchBodySchema, validateBody } from '../validation';
 
 const TAG = 'Branches';
 const router = express.Router();
@@ -117,7 +118,7 @@ export const resetBranches = () => {
 };
 
 // Create a new branch
-router.post('/', (req, res) => {
+router.post('/', validateBody(BranchBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new branch', { body: req.body });
   const newBranch: Branch = req.body;
   branches.push(newBranch);
@@ -146,7 +147,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a branch by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(BranchBodySchema), (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating branch`, { body: req.body });
   const index = branches.findIndex(b => b.branchId === parseInt(id));

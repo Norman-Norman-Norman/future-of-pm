@@ -103,6 +103,7 @@ import express from 'express';
 import { Headquarters } from '../models/headquarters';
 import { headquarters as seedHeadquarters } from '../seedData';
 import { logger } from '../logger';
+import { HeadquartersBodySchema, validateBody } from '../validation';
 
 const TAG = 'Headquarters';
 const router = express.Router();
@@ -111,7 +112,7 @@ let headquartersList: Headquarters[] = [...seedHeadquarters];
 logger.seed('headquarters', headquartersList.length);
 
 // Create a new headquarters
-router.post('/', (req, res) => {
+router.post('/', validateBody(HeadquartersBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new headquarters', { body: req.body });
   const newHeadquarters: Headquarters = req.body;
   headquartersList.push(newHeadquarters);
@@ -140,7 +141,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a headquarters by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(HeadquartersBodySchema), (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating headquarters`, { body: req.body });
   const index = headquartersList.findIndex(h => h.headquartersId === parseInt(id));

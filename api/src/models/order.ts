@@ -8,25 +8,37 @@
  *         - orderId
  *         - branchId
  *         - orderDate
+ *         - name
+ *         - description
+ *         - status
  *       properties:
  *         orderId:
  *           type: integer
+ *           minimum: 1
  *           description: The unique identifier for the order
  *         branchId:
  *           type: integer
+ *           minimum: 1
  *           description: The ID of the branch that placed the order
  *         orderDate:
  *           type: string
- *           format: date-time
+ *           minLength: 1
+ *           maxLength: 200
  *           description: The date and time when the order was placed
+ *         name:
+ *           type: string
+ *           minLength: 1
+ *           maxLength: 200
+ *           description: The name of the order
+ *         description:
+ *           type: string
+ *           minLength: 1
+ *           maxLength: 2000
+ *           description: Additional details about the order
  *         status:
  *           type: string
  *           description: The current status of the order
  *           enum: [pending, processing, shipped, delivered, cancelled]
- *         totalAmount:
- *           type: number
- *           format: float
- *           description: The total amount of the order
  */
 export interface Order {
     orderId: number;

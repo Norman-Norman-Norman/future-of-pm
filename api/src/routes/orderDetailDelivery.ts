@@ -103,6 +103,7 @@ import express from 'express';
 import { OrderDetailDelivery } from '../models/orderDetailDelivery';
 import { orderDetailDeliveries as seedOrderDetailDeliveries } from '../seedData';
 import { logger } from '../logger';
+import { OrderDetailDeliveryBodySchema, validateBody } from '../validation';
 
 const TAG = 'OrderDetailDeliveries';
 const router = express.Router();
@@ -115,7 +116,7 @@ export const resetOrderDetailDeliveries = () => {
 };
 
 // Create a new order detail delivery
-router.post('/', (req, res) => {
+router.post('/', validateBody(OrderDetailDeliveryBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new order detail delivery', { body: req.body });
   const newOrderDetailDelivery: OrderDetailDelivery = req.body;
   orderDetailDeliveries.push(newOrderDetailDelivery);
@@ -144,7 +145,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update an order detail delivery by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(OrderDetailDeliveryBodySchema), (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating order detail delivery`, { body: req.body });
   const index = orderDetailDeliveries.findIndex(odd => odd.orderDetailDeliveryId === parseInt(id));

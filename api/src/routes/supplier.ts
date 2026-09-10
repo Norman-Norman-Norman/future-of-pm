@@ -103,6 +103,7 @@ import express from 'express';
 import { Supplier } from '../models/supplier';
 import { suppliers as seedSuppliers } from '../seedData';
 import { logger } from '../logger';
+import { SupplierBodySchema, validateBody } from '../validation';
 
 const TAG = 'Suppliers';
 const router = express.Router();
@@ -111,7 +112,7 @@ let suppliers: Supplier[] = [...seedSuppliers];
 logger.seed('suppliers', suppliers.length);
 
 // Create a new supplier
-router.post('/', (req, res) => {
+router.post('/', validateBody(SupplierBodySchema), (req, res) => {
     logger.route(TAG, 'POST / - Creating new supplier', { body: req.body });
     const newSupplier = req.body as Supplier;
     suppliers.push(newSupplier);
@@ -140,7 +141,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update a supplier by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(SupplierBodySchema), (req, res) => {
     const id = req.params.id;
     logger.route(TAG, `PUT /${id} - Updating supplier`, { body: req.body });
     const index = suppliers.findIndex(s => s.supplierId === parseInt(id));
