@@ -6,14 +6,24 @@
  *       type: object
  *       required:
  *         - deliveryId
- *         - orderId
+ *         - supplierId
+ *         - deliveryDate
+ *         - scheduledDate
+ *         - name
+ *         - description
  *         - status
  *       properties:
  *         deliveryId:
  *           type: integer
+ *           minimum: 1
  *           description: The unique identifier for the delivery
+ *         supplierId:
+ *           type: integer
+ *           minimum: 1
+ *           description: The ID of the supplier providing the delivery
  *         orderId:
  *           type: integer
+ *           minimum: 1
  *           description: The ID of the order being delivered
  *         status:
  *           type: string
@@ -21,15 +31,38 @@
  *           enum: [pending, in-transit, delivered, failed]
  *         scheduledDate:
  *           type: string
- *           format: date-time
+ *           minLength: 1
+ *           maxLength: 200
  *           description: Scheduled delivery date and time
+ *         deliveryDate:
+ *           type: string
+ *           minLength: 1
+ *           maxLength: 200
+ *           description: Delivery date
  *         actualDeliveryDate:
  *           type: string
- *           format: date-time
+ *           maxLength: 200
  *           description: Actual delivery date and time
- *         notes:
+ *         name:
  *           type: string
- *           description: Additional notes about the delivery
+ *           minLength: 1
+ *           maxLength: 200
+ *           description: The name of the delivery
+ *         description:
+ *           type: string
+ *           minLength: 1
+ *           maxLength: 2000
+ *           description: Additional details about the delivery
+ *     DeliveryStatusUpdate:
+ *       type: object
+ *       required:
+ *         - status
+ *       additionalProperties: false
+ *       properties:
+ *         status:
+ *           type: string
+ *           enum: [pending, in-transit, delivered, failed]
+ *           description: Updated delivery status
  */
 export interface Delivery {
     deliveryId: number;

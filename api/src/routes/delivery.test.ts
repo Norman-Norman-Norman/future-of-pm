@@ -32,7 +32,12 @@ describe('Delivery API', () => {
             .send({ status: 'delivered', notifyCommand: 'echo exploited' });
 
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'notifyCommand is not supported' });
+        expect(response.body.error).toBe('Validation failed');
+        expect(response.body.details).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({ path: '', message: expect.stringContaining('Unrecognized key') })
+            ])
+        );
 
         const delivery = await request(app).get('/deliveries/1');
         expect(delivery.body.status).toBe(seedDeliveries[0].status);

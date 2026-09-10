@@ -162,6 +162,7 @@ import express from 'express';
 import { Product, ProductDetail, ProductReviewSummary } from '../models/product';
 import { productReviewStore, productStore, resetProductReviews, resetProducts } from '../dataStore';
 import { logger } from '../logger';
+import { ProductBodySchema, validateBody } from '../validation';
 
 const TAG = 'Products';
 const router = express.Router();
@@ -268,7 +269,7 @@ const getRelatedProducts = (source: Product, limit: number) =>
     .map(({ product }) => product);
 
 // Create a new product
-router.post('/', (req, res) => {
+router.post('/', validateBody(ProductBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new product', { body: req.body });
   const newProduct: Product = req.body;
   productStore.add(newProduct);
@@ -339,7 +340,7 @@ router.get('/:id/related', (req, res) => {
 });
 
 // Update a product by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(ProductBodySchema), (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating product`, { body: req.body });
   const product = productStore.replace(parseInt(id), req.body);

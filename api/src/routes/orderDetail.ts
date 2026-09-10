@@ -103,6 +103,7 @@ import express from 'express';
 import { OrderDetail } from '../models/orderDetail';
 import { orderDetailStore, resetOrderDetails } from '../dataStore';
 import { logger } from '../logger';
+import { OrderDetailBodySchema, validateBody } from '../validation';
 
 const TAG = 'OrderDetails';
 const router = express.Router();
@@ -112,7 +113,7 @@ logger.seed('orderDetails', orderDetailStore.all().length);
 export { resetOrderDetails };
 
 // Create a new order detail
-router.post('/', (req, res) => {
+router.post('/', validateBody(OrderDetailBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new order detail', { body: req.body });
   const newOrderDetail: OrderDetail = req.body;
   orderDetailStore.add(newOrderDetail);
@@ -142,7 +143,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update an order detail by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', validateBody(OrderDetailBodySchema), (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating order detail`, { body: req.body });
   const orderDetail = orderDetailStore.replace(parseInt(id), req.body);
