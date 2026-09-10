@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
+import { frontendLogger } from '../../../logger';
 
 const DISCOUNT_RATE = 0.05;
 const SHIPPING_COST = 10;
@@ -8,6 +10,17 @@ const SHIPPING_COST = 10;
 export default function Checkout() {
   const { darkMode } = useTheme();
   const { items, clearCart } = useCart();
+
+  useEffect(() => {
+    frontendLogger.componentMount('Checkout');
+    return () => frontendLogger.componentUnmount('Checkout');
+  }, []);
+
+  useEffect(() => {
+    frontendLogger.info('Checkout', `Checkout items: ${items.length}`, {
+      items: items.map(i => ({ name: i.name, qty: i.quantity, price: i.price }))
+    });
+  }, [items]);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = subtotal * DISCOUNT_RATE;
@@ -79,6 +92,11 @@ export default function Checkout() {
           </Link>
           <button
             onClick={() => {
+              frontendLogger.userAction('Place order', {
+                itemCount: items.length,
+                grandTotal,
+                items: items.map(i => ({ name: i.name, qty: i.quantity }))
+              });
               clearCart();
               alert('Order placed successfully!');
             }}

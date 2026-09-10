@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
 import { useCart } from '../../../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { frontendLogger } from '../../../logger';
 
 const DISCOUNT_RATE = 0.05;
 const COUPON_DISCOUNT_RATE = 0.10;
@@ -15,6 +16,12 @@ export default function Cart() {
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState('');
 
+  useEffect(() => {
+    frontendLogger.componentMount('Cart');
+    frontendLogger.info('Cart', `Cart page loaded with ${items.length} unique items`);
+    return () => frontendLogger.componentUnmount('Cart');
+  }, []);
+
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = subtotal * DISCOUNT_RATE;
   const couponDiscount = couponApplied ? subtotal * COUPON_DISCOUNT_RATE : 0;
@@ -22,12 +29,15 @@ export default function Cart() {
   const grandTotal = subtotal - discount - couponDiscount + shipping;
 
   const handleApplyCoupon = () => {
+    frontendLogger.userAction('Apply coupon', { code: couponCode });
     if (couponCode.trim().toLowerCase() === 'techconnect') {
       setCouponApplied(true);
       setCouponError('');
+      frontendLogger.info('Cart', 'Coupon applied successfully', { code: couponCode, discountRate: COUPON_DISCOUNT_RATE });
     } else {
       setCouponError('Invalid coupon code');
       setCouponApplied(false);
+      frontendLogger.warn('Cart', 'Invalid coupon code attempted', { code: couponCode });
     }
   };
 

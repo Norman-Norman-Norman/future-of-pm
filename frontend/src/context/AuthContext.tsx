@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { frontendLogger } from '../logger';
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -13,18 +14,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  frontendLogger.debug('AuthProvider', 'AuthProvider rendering', { isLoggedIn, isAdmin });
+
   const login = async (email: string, password: string) => {
+    frontendLogger.userAction('Login attempt', { email });
     // In a real app, you would validate credentials with an API
     // For now, we'll just check the email domain
     if (email && password) {
+      const adminStatus = email.endsWith('@github.com');
       setIsLoggedIn(true);
-      setIsAdmin(email.endsWith('@github.com'));
+      setIsAdmin(adminStatus);
+      frontendLogger.info('Auth', `Login successful`, { email, isAdmin: adminStatus });
+    } else {
+      frontendLogger.warn('Auth', 'Login failed — missing email or password');
     }
   };
 
   const logout = () => {
+    frontendLogger.userAction('Logout');
     setIsLoggedIn(false);
     setIsAdmin(false);
+    frontendLogger.info('Auth', 'User logged out');
   };
 
   return (

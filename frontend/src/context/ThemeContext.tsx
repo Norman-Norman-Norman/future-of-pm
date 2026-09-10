@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { useContext, useState, useEffect } from 'react';
 import { ThemeContext } from './themeContextUtils';
+import { frontendLogger } from '../logger';
 
 // Separate hook into its own component file to satisfy fast refresh
 export const useTheme = () => {
@@ -15,11 +16,14 @@ export const useTheme = () => {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? savedTheme === 'dark' : false;
+    const isDark = savedTheme ? savedTheme === 'dark' : false;
+    frontendLogger.info('Theme', `Initial theme loaded: ${isDark ? 'dark' : 'light'} (from ${savedTheme ? 'localStorage' : 'default'})`);
+    return isDark;
   });
 
   useEffect(() => {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    frontendLogger.stateChange('Theme', `Theme persisted: ${darkMode ? 'dark' : 'light'}`);
     
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -31,6 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [darkMode]);
 
   const toggleTheme = () => {
+    frontendLogger.userAction('Toggle theme', { from: darkMode ? 'dark' : 'light', to: darkMode ? 'light' : 'dark' });
     setDarkMode(!darkMode);
   };
 

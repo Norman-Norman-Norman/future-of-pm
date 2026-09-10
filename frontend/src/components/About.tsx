@@ -1,7 +1,14 @@
+import { useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { frontendLogger } from '../logger';
 
 const About = () => {
   const { darkMode } = useTheme();
+
+  useEffect(() => {
+    frontendLogger.componentMount('About');
+    return () => frontendLogger.componentUnmount('About');
+  }, []);
   
   return (
     <div className={`min-h-screen flex flex-col items-center justify-center ${darkMode ? 'bg-dark' : 'bg-gray-100'} p-4 transition-colors duration-300`}>

@@ -1,5 +1,6 @@
 import { Supplier } from './models/supplier';
 import { Product } from './models/product';
+import { ProductReview } from './models/productReview';
 import { Headquarters } from './models/headquarters';
 import { Branch } from './models/branch';
 import { Order } from './models/order';
@@ -45,7 +46,19 @@ export const products: Product[] = [
         price: 72.99,
         sku: "GHCP-HAT-001",
         unit: "piece",
-        imgName: "GHCP_ChefsHat.png"
+        imgName: "GHCP_ChefsHat.png",
+        stockLevel: 4,
+        reorderPoint: 10,
+        category: "Accessories",
+        images: [
+            { url: "/GHCP_ChefsHat.png", alt: "GitHub Copilot Chef's Hat product photo", isPrimary: true },
+            { url: "/copilot.png", alt: "GitHub Copilot brand mark on the chef's hat packaging" }
+        ],
+        specifications: [
+            { label: "Material", value: "Breathable stain-resistant cotton blend" },
+            { label: "Fit", value: "Adjustable one-size-fits-most band" },
+            { label: "Care", value: "Machine washable on gentle cycle" }
+        ]
     },
     {
         productId: 1,
@@ -56,7 +69,15 @@ export const products: Product[] = [
         sku: "CAT-FEED-001",
         unit: "piece",
         imgName: "feeder.png",
-        discount: 0.25
+        stockLevel: 18,
+        reorderPoint: 8,
+        discount: 0.25,
+        category: "Feeding",
+        specifications: [
+            { label: "Capacity", value: "6 meal compartments" },
+            { label: "Connectivity", value: "Wi-Fi app scheduling with offline fallback" },
+            { label: "Power", value: "USB-C with 24-hour battery backup" }
+        ]
     },
     {
         productId: 2,
@@ -67,7 +88,10 @@ export const products: Product[] = [
         sku: "CAT-LITTER-001",
         unit: "piece",
         imgName: "litter-box.png",
-        discount: 0.25
+        stockLevel: 7,
+        reorderPoint: 7,
+        discount: 0.25,
+        category: "Health"
     },
     {
         productId: 3,
@@ -77,7 +101,10 @@ export const products: Product[] = [
         price: 89.99,
         sku: "CAT-FLIX-001",
         unit: "piece",
-        imgName: "catflix.png"
+        imgName: "catflix.png",
+        stockLevel: 26,
+        reorderPoint: 10,
+        category: "Entertainment"
     },
     {
         productId: 4,
@@ -87,7 +114,10 @@ export const products: Product[] = [
         price: 79.99,
         sku: "CAT-COLLAR-001",
         unit: "piece",
-        imgName: "smart-collar.png"
+        imgName: "smart-collar.png",
+        stockLevel: 12,
+        reorderPoint: 12,
+        category: "Wearables"
     },
     {
         productId: 5,
@@ -97,7 +127,10 @@ export const products: Product[] = [
         price: 149.99,
         sku: "CAT-BED-001",
         unit: "piece",
-        imgName: "sleep-nest.png"
+        imgName: "sleep-nest.png",
+        stockLevel: 21,
+        reorderPoint: 9,
+        category: "Comfort"
     },
     {
         productId: 6,
@@ -107,7 +140,10 @@ export const products: Product[] = [
         price: 119.99,
         sku: "CAT-GROOM-001",
         unit: "piece",
-        imgName: "auto-groomer.png"
+        imgName: "auto-groomer.png",
+        stockLevel: 15,
+        reorderPoint: 8,
+        category: "Grooming"
     },
     {
         productId: 7,
@@ -118,7 +154,10 @@ export const products: Product[] = [
         sku: "CAT-FOUNTAIN-001",
         unit: "piece",
         imgName: "smart-fountain.png",
-        discount: 0.25
+        stockLevel: 3,
+        reorderPoint: 9,
+        discount: 0.25,
+        category: "Hydration"
     },
     {
         productId: 8,
@@ -128,7 +167,10 @@ export const products: Product[] = [
         price: 59.99,
         sku: "CAT-SCRATCH-001",
         unit: "piece",
-        imgName: "scratch-pad.png"
+        imgName: "scratch-pad.png",
+        stockLevel: 33,
+        reorderPoint: 15,
+        category: "Enrichment"
     },
     {
         productId: 9,
@@ -138,7 +180,10 @@ export const products: Product[] = [
         price: 99.99,
         sku: "CAT-CAM-001",
         unit: "piece",
-        imgName: "chirp-cam.png"
+        imgName: "chirp-cam.png",
+        stockLevel: 17,
+        reorderPoint: 10,
+        category: "Entertainment"
     },
     {
         productId: 10,
@@ -149,7 +194,10 @@ export const products: Product[] = [
         sku: "CAT-SNACK-001",
         unit: "piece",
         imgName: "snack-vault.png",
-        discount: 0.25
+        stockLevel: 6,
+        reorderPoint: 11,
+        discount: 0.25,
+        category: "Feeding"
     },
     {
         productId: 11,
@@ -159,7 +207,10 @@ export const products: Product[] = [
         price: 159.99,
         sku: "CAT-DOOR-001",
         unit: "piece",
-        imgName: "door-dash.png"
+        imgName: "door-dash.png",
+        stockLevel: 14,
+        reorderPoint: 6,
+        category: "Access"
     },
     {
         productId: 12,
@@ -169,7 +220,64 @@ export const products: Product[] = [
         price: 79.99,
         sku: "CAT-TRACKER-001",
         unit: "piece",
-        imgName: "tracker-mat.png"
+        imgName: "tracker-mat.png",
+        stockLevel: 28,
+        reorderPoint: 10,
+        category: "Activity"
+    }
+];
+
+// Product Reviews
+export const productReviews: ProductReview[] = [
+    {
+        reviewId: 1,
+        productId: 1,
+        reviewerName: "Meowtown Branch",
+        rating: 5,
+        title: "Reliable meal automation for busy branch teams",
+        comment: "The schedule controls are easy for store associates to understand, and cats adapted to the portions within a day.",
+        createdAt: "2026-03-08T10:00:00.000Z",
+        verifiedBuyer: true
+    },
+    {
+        reviewId: 2,
+        productId: 1,
+        reviewerName: "Tabby Terrace Branch",
+        rating: 4,
+        title: "Strong feeder with useful health signals",
+        comment: "The backup battery and portion history make this feel dependable enough for weekend coverage.",
+        createdAt: "2026-03-01T12:30:00.000Z",
+        verifiedBuyer: true
+    },
+    {
+        reviewId: 3,
+        productId: 2,
+        reviewerName: "CatTech Global HQ",
+        rating: 4,
+        title: "Cuts cleaning time significantly",
+        comment: "Odor control is excellent, and the usage alerts help spot possible health issues before they escalate.",
+        createdAt: "2026-02-22T09:15:00.000Z",
+        verifiedBuyer: true
+    },
+    {
+        reviewId: 4,
+        productId: 4,
+        reviewerName: "Meowtown Branch",
+        rating: 5,
+        title: "Clear tracking data and sturdy hardware",
+        comment: "The collar survived daily demo use and the location history gave staff confidence during patio events.",
+        createdAt: "2026-02-18T14:45:00.000Z",
+        verifiedBuyer: true
+    },
+    {
+        reviewId: 5,
+        productId: 13,
+        reviewerName: "PurrTech Innovations",
+        rating: 5,
+        title: "A conversation starter that still feels premium",
+        comment: "The embroidery is crisp, the fabric cleans up well, and the novelty does not compromise quality.",
+        createdAt: "2026-03-09T16:20:00.000Z",
+        verifiedBuyer: true
     }
 ];
 
@@ -223,10 +331,18 @@ export const orders: Order[] = [
     {
         orderId: 2,
         branchId: 2,
-        orderDate: new Date().toISOString(),
+        orderDate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         name: "Cat Enrichment Bundle",
         description: "Monthly cat entertainment systems restock",
         status: "processing"
+    },
+    {
+        orderId: 3,
+        branchId: 1,
+        orderDate: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+        name: "Cancelled Grooming Pilot",
+        description: "Cancelled grooming hardware pilot",
+        status: "cancelled"
     }
 ];
 
@@ -255,6 +371,14 @@ export const orderDetails: OrderDetail[] = [
         quantity: 20,
         unitPrice: 79.99,
         notes: "PawTrack Smart Collars for adoption events"
+    },
+    {
+        orderDetailId: 4,
+        orderId: 3,
+        productId: 6,
+        quantity: 2,
+        unitPrice: 119.99,
+        notes: "Cancelled pilot line item"
     }
 ];
 
@@ -263,7 +387,9 @@ export const deliveries: Delivery[] = [
     {
         deliveryId: 1,
         supplierId: 1,
+        orderId: 1,
         deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         name: "PurrTech Smart Home Bundle",
         description: "Premium cat tech products delivery for smart cat homes",
         status: "pending"
@@ -271,10 +397,34 @@ export const deliveries: Delivery[] = [
     {
         deliveryId: 2,
         supplierId: 2,
+        orderId: 2,
         deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
+        scheduledDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
         name: "WhiskerWare Entertainment Package",
         description: "Entertainment and tracking systems for feline companions",
         status: "in-transit"
+    },
+    {
+        deliveryId: 3,
+        supplierId: 3,
+        orderId: 1,
+        deliveryDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        scheduledDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        actualDeliveryDate: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
+        name: "CatNip Early Replenishment",
+        description: "Delivered early for the quarterly refresh",
+        status: "delivered"
+    },
+    {
+        deliveryId: 4,
+        supplierId: 2,
+        orderId: 2,
+        deliveryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        scheduledDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        actualDeliveryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        name: "WhiskerWare Late Collar Shipment",
+        description: "Delivered one day after schedule",
+        status: "delivered"
     }
 ];
 

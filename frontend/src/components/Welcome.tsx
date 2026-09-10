@@ -1,12 +1,18 @@
 import Slider from 'react-slick';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { frontendLogger } from '../logger';
 
 export default function Welcome() {
   const sliderRef = useRef<Slider | null>(null);
   const { darkMode } = useTheme();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    frontendLogger.componentMount('Welcome');
+    return () => frontendLogger.componentUnmount('Welcome');
+  }, []);
 
   const sliderSettings = {
     dots: true,
