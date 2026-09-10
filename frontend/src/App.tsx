@@ -13,6 +13,11 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
 import AdminProducts from './components/admin/AdminProducts';
+import AdminOrders from './components/admin/AdminOrders';
+import AdminBranches from './components/admin/AdminBranches';
+import AdminHeadquarters from './components/admin/AdminHeadquarters';
+import AdminSuppliers from './components/admin/AdminSuppliers';
+import AdminDeliveries from './components/admin/AdminDeliveries';
 import Cart from './components/entity/cart/Cart';
 import Checkout from './components/entity/cart/Checkout';
 import { useTheme } from './context/ThemeContext';
@@ -53,6 +58,11 @@ function ThemedApp() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/branches" element={<AdminBranches />} />
+            <Route path="/admin/headquarters" element={<AdminHeadquarters />} />
+            <Route path="/admin/suppliers" element={<AdminSuppliers />} />
+            <Route path="/admin/deliveries" element={<AdminDeliveries />} />
             <Route path="/launch" element={<LandingPage />} />
           </Routes>
         </main>
