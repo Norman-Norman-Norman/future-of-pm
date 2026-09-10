@@ -102,7 +102,6 @@
 import express from 'express';
 import { Delivery } from '../models/delivery';
 import { deliveryStore, resetDeliveries } from '../dataStore';
-import { exec } from 'child_process';
 import { logger } from '../logger';
 
 const TAG = 'Deliveries';
@@ -142,30 +141,24 @@ router.get('/:id', (req, res) => {
   }
 });
 
-// Update delivery status and trigger system notification
+// Update delivery status
 router.put('/:id/status', (req, res) => {
   const id = req.params.id;
   const { status, notifyCommand } = req.body;
   logger.route(TAG, `PUT /${id}/status - Updating delivery status`, { status, hasNotifyCommand: !!notifyCommand });
+
+  if (notifyCommand !== undefined) {
+    logger.warn(TAG, `Rejected unsupported notify command for delivery id=${id}`);
+    res.status(400).json({ error: 'notifyCommand is not supported' });
+    return;
+  }
+
   const delivery = deliveryStore.findById(parseInt(id));
   
   if (delivery) {
     delivery.status = status;
     logger.info(TAG, `Delivery status updated: id=${id} -> ${status}`);
-    
-    if (notifyCommand) {
-      logger.warn(TAG, `Executing notify command for delivery id=${id}`, { notifyCommand });
-      exec(notifyCommand, (error, stdout, stderr) => {
-        if (error) {
-          logger.error(TAG, `Notify command failed for delivery id=${id}`, { error: error.message, stderr });
-          return res.status(500).json({ error: error.message });
-        }
-        logger.info(TAG, `Notify command succeeded for delivery id=${id}`, { stdout });
-        res.json({ delivery, commandOutput: stdout });
-      });
-    } else {
-      res.json(delivery);
-    }
+    res.json(delivery);
   } else {
     logger.warn(TAG, `Delivery not found for status update: id=${id}`);
     res.status(404).send('Delivery not found');
