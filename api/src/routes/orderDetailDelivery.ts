@@ -110,12 +110,16 @@ const router = express.Router();
 let orderDetailDeliveries: OrderDetailDelivery[] = [...seedOrderDetailDeliveries];
 logger.seed('orderDetailDeliveries', orderDetailDeliveries.length);
 
+export const resetOrderDetailDeliveries = () => {
+  orderDetailDeliveries = [...seedOrderDetailDeliveries];
+};
+
 // Create a new order detail delivery
 router.post('/', (req, res) => {
   logger.route(TAG, 'POST / - Creating new order detail delivery', { body: req.body });
   const newOrderDetailDelivery: OrderDetailDelivery = req.body;
   orderDetailDeliveries.push(newOrderDetailDelivery);
-  logger.info(TAG, `Order detail delivery created`, { deliveryId: newOrderDetailDelivery.deliveryId, total: orderDetailDeliveries.length });
+  logger.info(TAG, `Order detail delivery created`, { orderDetailDeliveryId: newOrderDetailDelivery.orderDetailDeliveryId, total: orderDetailDeliveries.length });
   res.status(201).json(newOrderDetailDelivery);
 });
 
@@ -129,7 +133,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `GET /${id} - Looking up order detail delivery`);
-  const orderDetailDelivery = orderDetailDeliveries.find(odd => odd.deliveryId === parseInt(id));
+  const orderDetailDelivery = orderDetailDeliveries.find(odd => odd.orderDetailDeliveryId === parseInt(id));
   if (orderDetailDelivery) {
     logger.debug(TAG, `Found order detail delivery: id=${id}`);
     res.json(orderDetailDelivery);
@@ -143,7 +147,7 @@ router.get('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `PUT /${id} - Updating order detail delivery`, { body: req.body });
-  const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(id));
+  const index = orderDetailDeliveries.findIndex(odd => odd.orderDetailDeliveryId === parseInt(id));
   if (index !== -1) {
     orderDetailDeliveries[index] = req.body;
     logger.info(TAG, `Order detail delivery updated: id=${id}`);
@@ -158,7 +162,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
   logger.route(TAG, `DELETE /${id} - Deleting order detail delivery`);
-  const index = orderDetailDeliveries.findIndex(odd => odd.deliveryId === parseInt(id));
+  const index = orderDetailDeliveries.findIndex(odd => odd.orderDetailDeliveryId === parseInt(id));
   if (index !== -1) {
     orderDetailDeliveries.splice(index, 1);
     logger.info(TAG, `Order detail delivery deleted: id=${id}`, { remaining: orderDetailDeliveries.length });
