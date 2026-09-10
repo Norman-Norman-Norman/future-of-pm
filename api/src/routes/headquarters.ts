@@ -111,6 +111,11 @@ const router = express.Router();
 let headquartersList: Headquarters[] = [...seedHeadquarters];
 logger.seed('headquarters', headquartersList.length);
 
+export const resetHeadquarters = () => {
+  logger.debug(TAG, 'Resetting headquarters to seed data');
+  headquartersList = [...seedHeadquarters];
+};
+
 // Create a new headquarters
 router.post('/', validateBody(HeadquartersBodySchema), (req, res) => {
   logger.route(TAG, 'POST / - Creating new headquarters', { body: req.body });

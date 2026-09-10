@@ -111,6 +111,11 @@ const router = express.Router();
 let suppliers: Supplier[] = [...seedSuppliers];
 logger.seed('suppliers', suppliers.length);
 
+export const resetSuppliers = () => {
+    logger.debug(TAG, 'Resetting suppliers to seed data');
+    suppliers = [...seedSuppliers];
+};
+
 // Create a new supplier
 router.post('/', validateBody(SupplierBodySchema), (req, res) => {
     logger.route(TAG, 'POST / - Creating new supplier', { body: req.body });

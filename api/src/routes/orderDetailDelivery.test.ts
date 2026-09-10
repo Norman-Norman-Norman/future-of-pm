@@ -14,6 +14,29 @@ describe('OrderDetailDelivery API', () => {
         resetOrderDetailDeliveries();
     });
 
+    it('should create a new order detail delivery', async () => {
+        const newOrderDetailDelivery = {
+            ...seedOrderDetailDeliveries[0],
+            orderDetailDeliveryId: 99,
+            quantity: 2
+        };
+
+        const response = await request(app)
+            .post('/order-detail-deliveries')
+            .send(newOrderDetailDelivery);
+
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual(newOrderDetailDelivery);
+    });
+
+    it('should get all order detail deliveries', async () => {
+        const response = await request(app).get('/order-detail-deliveries');
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveLength(seedOrderDetailDeliveries.length);
+        expect(response.body).toEqual(seedOrderDetailDeliveries);
+    });
+
     it('should get an order detail delivery by orderDetailDeliveryId', async () => {
         const response = await request(app).get('/order-detail-deliveries/1');
 
@@ -49,5 +72,11 @@ describe('OrderDetailDelivery API', () => {
 
         const deleted = await request(app).get('/order-detail-deliveries/1');
         expect(deleted.status).toBe(404);
+    });
+
+    it('should return 404 for non-existing order detail delivery', async () => {
+        const response = await request(app).get('/order-detail-deliveries/999');
+
+        expect(response.status).toBe(404);
     });
 });
